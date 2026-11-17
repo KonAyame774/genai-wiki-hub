@@ -3,80 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GenAI Atelier &amp; Study Wiki｜實戰講義與 LLM Wiki 知識庫</title>
-  <meta name="description" content="以 AGENTS.md 為核心開發憲法打造的 GenAI 互動講義與 LLM Wiki 知識庫，採內容先行與單檔獨立架構，支援零痛擴充。">
+  <title>Aero Glass &amp; Optical UI Wiki｜毛玻璃與介面光學設計知識庫</title>
+  <meta name="description" content="以 AGENTS.md 規範驅動的 Vista Aero × Apple Liquid Glass 光學介面知識庫，深入拆解背景模糊彩度補償、物理倒角、50% 鏡面切面、文字光暈、SVG 雜訊與 GPU 合成效能。">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-cream: #FAF7F2;
-      --bg-card: #FFFFFF;
-      --bg-subtle: #F2ECE1;
-      --ink-primary: #1E293B;
-      --ink-secondary: #475569;
-      --accent-indigo: #4F46E5;
-      --accent-indigo-soft: #EEF2FF;
-      --accent-amber: #F59E0B;
-      --accent-amber-soft: #FEF3C7;
-      --accent-emerald: #10B981;
-      --accent-rose: #F43F5E;
-      --border-strong: 2px solid #1E293B;
-      --shadow-card: 5px 5px 0px rgba(30, 41, 59, 0.12);
+      --bg-deep: #0b192c;
+      --aurora-cyan: #0ea5e9;
+      --aurora-teal: #14b8a6;
+      --aurora-indigo: #4f46e5;
+      --aurora-aqua: #38bdf8;
+      --ink-dark: #1c1c1e;
+      --ink-body: #1e293b;
+      --ink-muted: #334155;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Noto Sans TC', 'Plus Jakarta Sans', sans-serif;
-      color: var(--ink-primary);
-      background-color: var(--bg-cream);
-      background-image: radial-gradient(#D8CFC2 1.2px, transparent 1.2px);
-      background-size: 24px 24px;
-      line-height: 1.7;
+      color: var(--ink-dark);
       min-height: 100vh;
+      line-height: 1.75;
+      background-color: #67c4eb;
+      overflow-x: hidden;
     }
 
-    .wrap {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 20px;
+    /* Vibrant Vista/Apple Fluid Mesh Backdrop */
+    .aurora-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.85) 0%, transparent 45%),
+        radial-gradient(circle at 86% 14%, rgba(79, 70, 229, 0.78) 0%, transparent 46%),
+        radial-gradient(circle at 78% 78%, rgba(14, 165, 233, 0.9) 0%, transparent 48%),
+        radial-gradient(circle at 22% 84%, rgba(245, 158, 11, 0.55) 0%, transparent 44%),
+        linear-gradient(135deg, #bae6fd 0%, #38bdf8 40%, #0d9488 78%, #1e3a8a 100%);
     }
 
-    .mono {
-      font-family: 'JetBrains Mono', monospace;
+    .aurora-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
     }
 
-    .en-font {
-      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+    /* Core .glass-panel Spec from AGENTS.md */
+    .glass-panel {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.34) 0%,
+        rgba(255, 255, 255, 0.12) 100%
+      );
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-top-color: rgba(255, 255, 255, 0.7);
+      border-left-color: rgba(255, 255, 255, 0.5);
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
     }
 
-    /* Sticky Topbar */
+    /* Vista Classic 50% Specular Cut */
+    .glass-panel::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.05) 100%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 3% Micro Frosted SVG Noise Layer */
+    .glass-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.032;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glass-panel > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Vista Halo Text */
+    .vista-text {
+      color: #1c1c1e;
+      font-weight: 700;
+      text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.9),
+        0 0 16px rgba(255, 255, 255, 0.5);
+    }
+
+    /* Sticky Aero Topbar */
     .topbar {
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(250, 247, 242, 0.92);
-      backdrop-filter: blur(8px);
-      border-bottom: var(--border-strong);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.28) 100%);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
     }
 
     .topbar-inner {
       max-width: 1080px;
       margin: 0 auto;
-      padding: 14px 20px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
@@ -85,72 +153,76 @@
       align-items: center;
       gap: 12px;
       text-decoration: none;
-      color: var(--ink-primary);
+      color: var(--ink-dark);
     }
 
-    .brand-mark {
-      width: 42px;
-      height: 42px;
+    .brand-orb {
+      width: 40px;
+      height: 40px;
       border-radius: 12px;
-      background: var(--accent-indigo);
-      border: var(--border-strong);
-      box-shadow: 3px 3px 0px rgba(30, 41, 59, 0.18);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.78) 0%, rgba(56, 189, 248, 0.65) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.95);
       display: grid;
       place-items: center;
-      color: #FFFFFF;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-weight: 800;
       font-size: 18px;
+      color: #0c4a6e;
       flex-shrink: 0;
     }
 
     .brand-text b {
       display: block;
       font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+      font-size: 17px;
       font-weight: 800;
-      font-size: 18px;
       line-height: 1.2;
     }
 
     .brand-text span {
       display: block;
-      font-size: 12.5px;
-      color: var(--ink-secondary);
-      font-weight: 500;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-body);
     }
 
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .nav-link {
       text-decoration: none;
-      color: var(--ink-primary);
-      font-size: 14px;
+      color: var(--ink-dark);
+      font-size: 13.5px;
       font-weight: 700;
-      padding: 7px 14px;
+      padding: 7px 13px;
       border-radius: 10px;
-      border: 2px solid transparent;
+      border: 1px solid transparent;
       transition: all 0.15s ease;
     }
 
     .nav-link:hover {
-      background: var(--bg-card);
-      border-color: var(--ink-primary);
+      background: rgba(255, 255, 255, 0.55);
+      border-color: rgba(255, 255, 255, 0.8);
     }
 
-    .nav-badge {
-      background: var(--accent-amber-soft);
-      border: var(--border-strong);
-      box-shadow: 2px 2px 0px rgba(30, 41, 59, 0.12);
+    .nav-pill {
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
 
     /* Hero */
-    .hero {
-      padding: 44px 0 32px;
+    .hero-wrap {
+      padding: 36px 0 24px;
+    }
+
+    .hero-panel {
+      padding: 32px;
       display: grid;
       grid-template-columns: 1.35fr 0.9fr;
       gap: 28px;
@@ -161,35 +233,31 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: var(--accent-indigo-soft);
-      color: var(--accent-indigo);
-      border: var(--border-strong);
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.85);
       border-radius: 999px;
       padding: 5px 14px;
-      font-size: 13px;
-      font-weight: 700;
-      margin-bottom: 16px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #0369a1;
+      margin-bottom: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
 
-    .hero h1 {
+    .hero-panel h1 {
       font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
       font-weight: 900;
-      font-size: clamp(30px, 4.4vw, 44px);
-      line-height: 1.22;
-      margin-bottom: 16px;
-      letter-spacing: -0.01em;
-    }
-
-    .hero h1 .hl {
-      background: linear-gradient(transparent 58%, var(--accent-amber-soft) 58%);
-      padding: 0 4px;
+      font-size: clamp(28px, 4.2vw, 42px);
+      line-height: 1.24;
+      margin-bottom: 14px;
     }
 
     .hero-desc {
-      color: var(--ink-secondary);
-      font-size: 16.5px;
+      font-size: 15.5px;
+      color: var(--ink-body);
+      font-weight: 500;
       margin-bottom: 22px;
-      max-width: 600px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.65);
     }
 
     .hero-actions {
@@ -198,140 +266,127 @@
       flex-wrap: wrap;
     }
 
-    .btn {
+    .aero-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 11px 20px;
+      padding: 10px 18px;
       border-radius: 12px;
-      border: var(--border-strong);
       font-family: 'Noto Sans TC', 'Plus Jakarta Sans', sans-serif;
-      font-weight: 700;
-      font-size: 15px;
+      font-weight: 800;
+      font-size: 14.5px;
       text-decoration: none;
       cursor: pointer;
-      box-shadow: 3px 3px 0px rgba(30, 41, 59, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.85);
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .btn:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 5px 5px 0px rgba(30, 41, 59, 0.18);
+    .aero-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
 
-    .btn-primary {
-      background: var(--accent-indigo);
+    .aero-btn-primary {
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
       color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.7);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
     }
 
-    .btn-secondary {
-      background: var(--bg-card);
-      color: var(--ink-primary);
+    .aero-btn-secondary {
+      background: rgba(255, 255, 255, 0.66);
+      color: var(--ink-dark);
     }
 
-    .hero-panel {
-      background: var(--bg-card);
-      border: var(--border-strong);
-      border-radius: 16px;
-      padding: 22px;
-      box-shadow: var(--shadow-card);
+    /* Inner sub-panel uses translucent solid to respect GPU Compositing Budget */
+    .hero-stats-box {
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(255, 255, 255, 0.75);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      border-radius: 14px;
+      padding: 18px;
     }
 
-    .hero-panel-head {
+    .stats-head {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      border-bottom: 2px dashed #CBD5E1;
-      padding-bottom: 12px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--ink-secondary);
+      align-items: center;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.15);
+      font-size: 12.5px;
+      font-weight: 800;
     }
 
-    .status-dot {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #047857;
-      background: #ECFDF5;
-      border: 1.5px solid #10B981;
-      padding: 2px 10px;
+    .status-badge {
+      background: rgba(16, 185, 129, 0.18);
+      color: #065f46;
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      padding: 2px 9px;
       border-radius: 999px;
-      font-size: 12px;
+      font-size: 11.5px;
     }
 
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 10px;
     }
 
-    .stat-box {
-      background: var(--bg-subtle);
-      border: 2px solid var(--ink-primary);
-      border-radius: 12px;
-      padding: 12px 14px;
+    .stat-cell {
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 10px;
+      padding: 11px 12px;
     }
 
     .stat-num {
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-weight: 800;
-      font-size: 26px;
+      font-size: 24px;
       line-height: 1.1;
-      color: var(--accent-indigo);
-      margin-bottom: 4px;
+      color: #0369a1;
+      margin-bottom: 3px;
     }
 
-    .stat-label {
-      font-size: 12.5px;
+    .stat-lbl {
+      font-size: 12px;
       font-weight: 700;
-      color: var(--ink-secondary);
+      color: var(--ink-muted);
     }
 
-    /* Section Header */
-    .section {
-      padding: 28px 0 40px;
+    /* Sections */
+    .sec { padding: 24px 0 34px; }
+
+    .sec-head {
+      margin-bottom: 18px;
     }
 
-    .section-head {
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      margin-bottom: 22px;
-    }
-
-    .section-title {
+    .sec-title {
       font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
       font-weight: 900;
-      font-size: 26px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      font-size: 25px;
     }
 
-    .section-sub {
-      color: var(--ink-secondary);
+    .sec-sub {
       font-size: 14.5px;
+      font-weight: 600;
+      color: var(--ink-body);
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
       margin-top: 4px;
     }
 
-    /* Filter & Search Bar */
+    /* Filter & Search Glass Bar */
     .toolbar {
-      background: var(--bg-card);
-      border: var(--border-strong);
-      border-radius: 16px;
-      padding: 14px 16px;
-      box-shadow: var(--shadow-card);
+      padding: 14px 18px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
       flex-wrap: wrap;
-      margin-bottom: 26px;
+      margin-bottom: 24px;
     }
 
     .filter-group {
@@ -343,23 +398,22 @@
     .filter-btn {
       padding: 7px 14px;
       border-radius: 999px;
-      border: 2px solid var(--ink-primary);
-      background: var(--bg-cream);
-      color: var(--ink-primary);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.52);
+      color: var(--ink-dark);
       font-family: 'Noto Sans TC', sans-serif;
       font-weight: 700;
       font-size: 13.5px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.14s ease;
     }
 
-    .filter-btn:hover {
-      background: var(--accent-indigo-soft);
-    }
+    .filter-btn:hover { background: rgba(255, 255, 255, 0.82); }
 
     .filter-btn.active {
-      background: var(--ink-primary);
+      background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
       color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.65);
     }
 
     .search-box {
@@ -370,53 +424,51 @@
 
     .search-box input {
       width: 100%;
-      padding: 9px 14px 9px 36px;
+      padding: 8px 14px 8px 34px;
       border-radius: 10px;
-      border: 2px solid var(--ink-primary);
-      background: var(--bg-cream);
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.68);
       font-family: 'Noto Sans TC', sans-serif;
-      font-size: 14px;
-      color: var(--ink-primary);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-dark);
       outline: none;
     }
 
     .search-box input:focus {
-      background: #FFFFFF;
-      border-color: var(--accent-indigo);
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #0284c7;
     }
 
     .search-icon {
       position: absolute;
-      left: 12px;
+      left: 11px;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--ink-secondary);
-      font-size: 14px;
+      font-size: 13px;
       pointer-events: none;
     }
 
-    /* Lesson Cards Grid */
+    /* Lesson Cards */
     .lesson-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
       gap: 22px;
     }
 
-    .card {
-      background: var(--bg-card);
-      border: var(--border-strong);
-      border-radius: 16px;
+    .lesson-card {
       padding: 24px;
-      box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      position: relative;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
     }
 
-    .card:hover {
-      transform: translate(-2px, -2px);
-      box-shadow: 7px 7px 0px rgba(30, 41, 59, 0.16);
+    .lesson-card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 26px 48px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.12);
     }
 
     .card-top {
@@ -431,55 +483,55 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-weight: 800;
       font-size: 12px;
-      letter-spacing: 0.04em;
       padding: 4px 11px;
       border-radius: 999px;
-      background: var(--accent-indigo);
+      background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%);
       color: #FFFFFF;
-      border: 1.5px solid var(--ink-primary);
+      border: 1px solid rgba(255, 255, 255, 0.65);
     }
 
     .cat-pill {
-      font-size: 12.5px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 800;
       padding: 4px 10px;
       border-radius: 8px;
-      background: var(--bg-subtle);
-      color: var(--ink-primary);
-      border: 1.5px solid var(--ink-primary);
+      background: rgba(255, 255, 255, 0.62);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      color: var(--ink-dark);
     }
 
-    .card h3 {
-      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+    .lesson-card h3 {
+      font-size: 19.5px;
       font-weight: 800;
-      font-size: 20px;
       line-height: 1.35;
       margin-bottom: 10px;
     }
 
-    .card p {
-      color: var(--ink-secondary);
+    .lesson-card p {
       font-size: 14.5px;
+      color: var(--ink-body);
+      font-weight: 500;
       flex: 1;
       margin-bottom: 16px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.6);
     }
 
     .tags {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
     .tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
       font-weight: 600;
-      padding: 4px 9px;
+      padding: 3px 9px;
       border-radius: 6px;
-      background: var(--accent-indigo-soft);
-      color: var(--accent-indigo);
-      border: 1.5px solid #C7D2FE;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      color: #0c4a6e;
     }
 
     .card-foot {
@@ -488,411 +540,355 @@
       justify-content: space-between;
       gap: 10px;
       padding-top: 14px;
-      border-top: 2px dashed #E2E8F0;
+      border-top: 1px solid rgba(255, 255, 255, 0.45);
     }
 
     .read-time {
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
-      color: var(--ink-secondary);
+      color: var(--ink-body);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
     }
 
     .go-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--accent-amber-soft);
-      color: var(--ink-primary);
-      border: var(--border-strong);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #FFFFFF;
+      background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+      border: 1px solid rgba(255, 255, 255, 0.72);
       border-radius: 10px;
       padding: 7px 14px;
-      font-weight: 700;
-      font-size: 14px;
-      text-decoration: none;
-      box-shadow: 2px 2px 0px rgba(30, 41, 59, 0.14);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.7);
       transition: transform 0.12s ease;
     }
 
-    .go-link:hover {
-      background: var(--accent-amber);
-      transform: translate(-1px, -1px);
-    }
+    .go-link:hover { transform: translateY(-1px); }
 
     /* Dashed Placeholder Card (.card-soon) */
     .card-soon {
-      background: rgba(255, 255, 255, 0.55);
-      border: 2px dashed #64748B;
-      box-shadow: none;
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.22);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 2px dashed rgba(255, 255, 255, 0.75);
+      display: flex;
+      flex-direction: column;
     }
 
-    .card-soon:hover {
-      transform: none;
-      box-shadow: none;
-      background: rgba(255, 255, 255, 0.85);
-    }
-
-    .unit-pill-soon {
-      background: var(--accent-amber-soft);
-      color: var(--ink-primary);
-    }
+    .card-soon h3 { font-size: 19.5px; font-weight: 800; margin-bottom: 10px; }
+    .card-soon p { font-size: 14.5px; color: var(--ink-body); font-weight: 500; flex: 1; margin-bottom: 14px; }
 
     .copy-btn {
       width: 100%;
-      margin-top: 6px;
       padding: 10px 14px;
       border-radius: 10px;
-      border: var(--border-strong);
-      background: var(--bg-card);
-      color: var(--ink-primary);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.68);
+      color: var(--ink-dark);
       font-family: 'Noto Sans TC', sans-serif;
-      font-weight: 700;
+      font-weight: 800;
       font-size: 13.5px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      box-shadow: 3px 3px 0px rgba(30, 41, 59, 0.12);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
       transition: all 0.15s ease;
     }
 
-    .copy-btn:hover {
-      background: var(--accent-indigo-soft);
-    }
-
-    .copy-btn.copied {
-      background: #ECFDF5;
-      border-color: var(--accent-emerald);
-      color: #047857;
-    }
+    .copy-btn:hover { background: rgba(255, 255, 255, 0.92); }
+    .copy-btn.copied { background: rgba(16, 185, 129, 0.25); color: #064e3b; border-color: #10b981; }
 
     .empty-state {
       display: none;
       grid-column: 1 / -1;
       text-align: center;
-      background: var(--bg-card);
-      border: var(--border-strong);
-      border-radius: 16px;
-      padding: 36px 20px;
-      box-shadow: var(--shadow-card);
+      padding: 32px 20px;
     }
 
-    /* AGENTS.md Architecture Showcase Section */
-    .arch-box {
-      background: var(--bg-card);
-      border: var(--border-strong);
-      border-radius: 16px;
+    /* Architecture & Reference CSS Section */
+    .arch-panel {
       padding: 28px;
-      box-shadow: var(--shadow-card);
     }
 
-    .workflow-steps {
+    .workflow-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-      gap: 16px;
-      margin: 22px 0 28px;
+      gap: 14px;
+      margin: 20px 0 24px;
     }
 
-    .step-card {
-      background: var(--bg-cream);
-      border: var(--border-strong);
+    .step-box {
+      background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(255, 255, 255, 0.8);
       border-radius: 12px;
-      padding: 18px 16px;
-      position: relative;
+      padding: 16px;
     }
 
     .step-num {
       display: inline-block;
       font-family: 'Plus Jakarta Sans', sans-serif;
       font-weight: 800;
-      font-size: 12px;
-      padding: 3px 9px;
+      font-size: 11.5px;
+      padding: 2px 8px;
       border-radius: 6px;
-      background: var(--ink-primary);
+      background: #0369a1;
       color: #FFFFFF;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
-    .step-card h4 {
-      font-size: 16px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
+    .step-box h4 { font-size: 15.5px; font-weight: 800; margin-bottom: 5px; }
+    .step-box p { font-size: 13px; color: var(--ink-body); }
 
-    .step-card p {
-      font-size: 13.5px;
-      color: var(--ink-secondary);
-    }
-
-    .rule-grid {
+    .code-and-rules {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
       align-items: start;
     }
 
     .rule-table-wrap {
-      overflow-x: auto;
-      border: var(--border-strong);
+      background: rgba(255, 255, 255, 0.64);
+      border: 1px solid rgba(255, 255, 255, 0.85);
       border-radius: 12px;
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13.5px;
-      background: var(--bg-card);
+      font-size: 13px;
     }
 
     th, td {
       text-align: left;
-      padding: 11px 14px;
-      border-bottom: 1.5px solid #E2E8F0;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(30, 41, 59, 0.12);
     }
 
     th {
-      background: var(--bg-subtle);
+      background: rgba(255, 255, 255, 0.55);
       font-weight: 800;
-      border-bottom: var(--border-strong);
     }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
+    tr:last-child td { border-bottom: none; }
 
-    .prompt-panel {
-      background: #1E293B;
-      color: #F8FAFC;
-      border: var(--border-strong);
+    .dark-code-card {
+      background: rgba(15, 23, 42, 0.86);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.35);
       border-radius: 12px;
-      padding: 18px;
+      padding: 16px;
     }
 
-    .prompt-panel-head {
+    .code-head {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
-      margin-bottom: 12px;
-      font-size: 13px;
+      margin-bottom: 10px;
+      font-size: 12.5px;
       font-weight: 700;
-      color: #FCD34D;
+      color: #7dd3fc;
     }
 
-    .prompt-code {
-      font-family: 'Noto Sans TC', 'JetBrains Mono', monospace;
-      font-size: 13px;
-      line-height: 1.65;
-      color: #E2E8F0;
-      background: rgba(15, 23, 42, 0.7);
-      border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-
-    .file-tree {
+    pre.css-spec {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
-      line-height: 1.6;
-      color: #CBD5E1;
-      background: rgba(15, 23, 42, 0.5);
-      border-radius: 8px;
-      padding: 10px 12px;
-      overflow-x: auto;
+      line-height: 1.55;
+      max-height: 290px;
+      overflow: auto;
       white-space: pre;
+      color: #f8fafc;
+      background: rgba(2, 6, 23, 0.55);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      margin-bottom: 12px;
+    }
+
+    .prompt-box {
+      font-size: 12.5px;
+      line-height: 1.6;
+      background: rgba(2, 6, 23, 0.55);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #cbd5e1;
     }
 
     footer {
-      margin-top: 24px;
-      padding: 28px 0 42px;
-      border-top: 2px dashed #CBD5E1;
+      margin: 18px 0 42px;
+      padding: 16px 22px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 12px;
-      color: var(--ink-secondary);
-      font-size: 13.5px;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
-    @media (max-width: 820px) {
-      .hero {
-        grid-template-columns: 1fr;
-        padding: 30px 0 20px;
-      }
-      .rule-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .topbar-inner {
-        padding: 12px 16px;
-      }
-      .arch-box {
-        padding: 20px 16px;
-      }
+    @media (max-width: 860px) {
+      .hero-panel { grid-template-columns: 1fr; padding: 24px 20px; }
+      .code-and-rules { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+  <div class="aurora-backdrop" aria-hidden="true"></div>
+  <div class="aurora-grid" aria-hidden="true"></div>
 
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand" href="index.html">
-        <div class="brand-mark">G</div>
+        <div class="brand-orb">✦</div>
         <div class="brand-text">
-          <b>GenAI Atelier &amp; Study Wiki</b>
-          <span>LLM Wiki 筆記 × 互動式講義知識庫</span>
+          <b class="vista-text">Aero Glass &amp; Optical UI Wiki</b>
+          <span>Vista Aero × Apple Liquid Glass 光學知識庫</span>
         </div>
       </a>
       <nav class="nav-links" aria-label="主導覽列">
-        <a class="nav-link" href="#lessons">講義單元</a>
-        <a class="nav-link" href="#architecture">AGENTS.md 工作流</a>
-        <a class="nav-link nav-badge mono" href="#extend-prompt">AGENTS.md v1.2</a>
+        <a class="nav-link" href="#lessons">光學講義單元</a>
+        <a class="nav-link" href="#architecture">標準 CSS 與 AGENTS.md</a>
+        <a class="nav-link nav-pill mono" href="#extend-spec">AGENTS.md v2.0</a>
       </nav>
     </div>
   </header>
 
   <main class="wrap">
-    <!-- Hero -->
-    <section class="hero">
-      <div>
-        <div class="hero-eyebrow">
-          <span>📐 TAICA 生成式 AI 第九週實作專案</span>
+    <!-- Hero Glass Panel -->
+    <section class="hero-wrap">
+      <div class="glass-panel hero-panel">
+        <div>
+          <div class="hero-eyebrow">💎 TAICA 生成式 AI 第九週實作專案・光學版</div>
+          <h1 class="vista-text">用 <code class="mono">AGENTS.md</code> 鎖定光學密碼，<br>打造可永續擴充的 Aero Glass 知識庫。</h1>
+          <p class="hero-desc">
+            結合 Windows Vista Aero 的「50% 鏡面反光切面、1px 倒角高光與文字光暈」，以及 Apple 介面的「模糊彩度補償與微觀 SVG 雜訊」。每一頁都先寫定 <code class="mono">notes/*.md</code> 原稿，再生成嚴格遵守 GPU 合成效能預算的單檔互動講義。
+          </p>
+          <div class="hero-actions">
+            <a class="aero-btn aero-btn-primary" href="#lessons">探索 3 個光學講義 ↓</a>
+            <a class="aero-btn aero-btn-secondary" href="lessons/bevel-and-refraction/index.html">體驗 Vista 光學組裝器 →</a>
+          </div>
         </div>
-        <h1>不只是 Vibe Coding，<br>用 <span class="hl">AGENTS.md</span> 打造<br>會自我生長的知識庫。</h1>
-        <p class="hero-desc">
-          這裡每一份講義都遵循「內容先行（<code class="mono">notes/*.md</code>）」與「單檔獨立（<code class="mono">lessons/*/index.html</code>）」的標準開發憲法。任何 AI 只要讀懂規則，就能立刻為這座知識庫擴充下一個風格一致的互動單元。
-        </p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#lessons">瀏覽講義單元 ↓</a>
-          <a class="btn btn-secondary" href="lessons/agentic-workflow/index.html">先看 Unit 03：AGENTS.md 實戰 →</a>
-        </div>
-      </div>
 
-      <aside class="hero-panel" aria-label="知識庫狀態儀表板">
-        <div class="hero-panel-head">
-          <span class="mono">WORKSPACE STATUS</span>
-          <span class="status-dot">● 已對齊 AGENTS.md</span>
-        </div>
-        <div class="stats-grid">
-          <div class="stat-box">
-            <div class="stat-num" id="stat-units">03</div>
-            <div class="stat-label">已定稿講義單元</div>
+        <aside class="hero-stats-box" aria-label="知識庫狀態儀表板">
+          <div class="stats-head">
+            <span class="mono">OPTICAL SPEC STATUS</span>
+            <span class="status-badge">● 已套用 5 大技巧</span>
           </div>
-          <div class="stat-box">
-            <div class="stat-num">03</div>
-            <div class="stat-label">免 Key 互動實驗室</div>
+          <div class="stats-grid">
+            <div class="stat-cell">
+              <div class="stat-num">03</div>
+              <div class="stat-lbl">已定稿光學單元</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">03</div>
+              <div class="stat-lbl">即時 CSS 互動實驗台</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">190%</div>
+              <div class="stat-lbl">標準 Saturate 補償</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-num">3.2%</div>
+              <div class="stat-lbl">SVG 磨砂雜訊濃度</div>
+            </div>
           </div>
-          <div class="stat-box">
-            <div class="stat-num">09</div>
-            <div class="stat-label">隨堂即時測驗題</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-num">100%</div>
-            <div class="stat-label">純靜態相對路徑</div>
-          </div>
-        </div>
-      </aside>
+        </aside>
+      </div>
     </section>
 
-    <!-- Lessons Section -->
-    <section class="section" id="lessons">
-      <div class="section-head">
-        <div>
-          <h2 class="section-title">📚 互動講義庫（Study Wiki）</h2>
-          <p class="section-sub">每份講義皆包含「TL;DR 核心觀念」、「常見誤區」、「原生 JS 互動實驗室」與「3 題即時測驗」。</p>
-        </div>
+    <!-- Lessons Grid -->
+    <section class="sec" id="lessons">
+      <div class="sec-head">
+        <h2 class="sec-title vista-text">🪟 光學講義庫（Optical Study Wiki）</h2>
+        <p class="sec-sub">全站面板皆直接運行 <code class="mono">blur(20px) saturate(190%)</code>、光學倒角與 <code class="mono">::before</code> 50% 鏡面切線，點入各單元可親手調參數。</p>
       </div>
 
-      <div class="toolbar">
-        <div class="filter-group" role="group" aria-label="單元分類篩選">
+      <div class="glass-panel toolbar">
+        <div class="filter-group" role="group" aria-label="光學分類篩選">
           <button type="button" class="filter-btn active" data-filter="all">全部 (3)</button>
-          <button type="button" class="filter-btn" data-filter="檢索增強">檢索增強 (1)</button>
-          <button type="button" class="filter-btn" data-filter="Agent 架構">Agent 架構 (1)</button>
-          <button type="button" class="filter-btn" data-filter="AI 工作流">AI 工作流 (1)</button>
+          <button type="button" class="filter-btn" data-filter="光學基底">光學基底 (1)</button>
+          <button type="button" class="filter-btn" data-filter="表面折射">表面折射 (1)</button>
+          <button type="button" class="filter-btn" data-filter="效能與規範">效能與規範 (1)</button>
         </div>
         <div class="search-box">
           <span class="search-icon">🔍</span>
-          <input type="search" id="searchInput" placeholder="搜尋標題、關鍵字或單元編號…" aria-label="搜尋講義單元">
+          <input type="search" id="searchInput" placeholder="搜尋屬性或關鍵字（如 saturate, inset, gpu）…" aria-label="搜尋光學講義">
         </div>
       </div>
 
       <div class="lesson-grid" id="lessonGrid">
         <!-- Unit 01 -->
-        <article class="card lesson-card" data-category="檢索增強" data-search="unit 01 rag architecture 檢索增強生成 embedding vector db chunking 開書考">
+        <article class="glass-panel lesson-card" data-category="光學基底" data-search="unit 01 blur saturation saturate 190% backdrop-filter svg noise data uri 發灰 雜訊">
           <div class="card-top">
             <span class="unit-pill">UNIT 01</span>
-            <span class="cat-pill">檢索增強</span>
+            <span class="cat-pill">光學基底</span>
           </div>
-          <h3>RAG 檢索增強生成原理與實務</h3>
-          <p>替大型語言模型辦一場「開書考」：拆解離線切塊索引與線上向量檢索流程，親手調整 Chunk Size 與 Top-K 觀察幻覺如何產生或消除。</p>
+          <h3 class="vista-text">背景模糊、鮮豔度補償與玻璃微觀雜訊</h3>
+          <p>為什麼單純用 <code class="mono">blur()</code> 會讓背景發灰濁？拆解 <code class="mono">saturate(190%)</code> 彩度補償原理與 2%～4% SVG Noise 消弭色階斷裂的秘密。</p>
           <div class="tags">
-            <span class="tag">Embedding</span>
-            <span class="tag">Vector DB</span>
-            <span class="tag">Chunking</span>
+            <span class="tag">backdrop-filter</span>
+            <span class="tag">saturate(190%)</span>
+            <span class="tag">SVG Noise</span>
           </div>
           <div class="card-foot">
-            <span class="read-time">⏱ 10 分鐘・含模擬器</span>
-            <a class="go-link" href="lessons/rag-architecture/index.html">進入講義 →</a>
+            <span class="read-time">⏱ 10 分鐘・含調校台</span>
+            <a class="go-link" href="lessons/blur-and-saturation/index.html">進入實驗 →</a>
           </div>
         </article>
 
         <!-- Unit 02 -->
-        <article class="card lesson-card" data-category="Agent 架構" data-search="unit 02 reflection agent 反思型 drafter critic refiner rubric 自我審查">
+        <article class="glass-panel lesson-card" data-category="表面折射" data-search="unit 02 bevel refraction inset box-shadow before 50% vista-text text-shadow 倒角 光暈 鏡面">
           <div class="card-top">
             <span class="unit-pill">UNIT 02</span>
-            <span class="cat-pill">Agent 架構</span>
+            <span class="cat-pill">表面折射</span>
           </div>
-          <h3>Reflection 反思型 Agent 架構與設計</h3>
-          <p>告別一次生成就交卷！透過 Drafter → Critic → Refiner 三階段分工與 Rubric 評分機制，讓 AI 學會批判與重構自己的初稿。</p>
+          <h3 class="vista-text">物理厚度、倒角光線與 Vista 鏡面切面</h3>
+          <p>用上左亮邊＋<code class="mono">inset</code> 1px 高光做出實體厚度，透過 <code class="mono">::before</code> 50% 非連續漸層切出 Vista 鏡面反光，並以 <code class="mono">.vista-text</code> 護住可讀性。</p>
           <div class="tags">
-            <span class="tag">Reflection</span>
-            <span class="tag">Critic</span>
-            <span class="tag">Rubric</span>
+            <span class="tag">Inset Bevel</span>
+            <span class="tag">::before 50%</span>
+            <span class="tag">.vista-text</span>
           </div>
           <div class="card-foot">
-            <span class="read-time">⏱ 12 分鐘・含模擬器</span>
-            <a class="go-link" href="lessons/reflection-agent/index.html">進入講義 →</a>
+            <span class="read-time">⏱ 12 分鐘・含組裝器</span>
+            <a class="go-link" href="lessons/bevel-and-refraction/index.html">進入實驗 →</a>
           </div>
         </article>
 
         <!-- Unit 03 -->
-        <article class="card lesson-card" data-category="AI 工作流" data-search="unit 03 agentic workflow agents.md claude.md harness vibe coding 換你當老闆">
+        <article class="glass-panel lesson-card" data-category="效能與規範" data-search="unit 03 gpu compositing fps agents.md claude.md 效能 瓶頸 合成圖層 視差">
           <div class="card-top">
             <span class="unit-pill">UNIT 03</span>
-            <span class="cat-pill">AI 工作流</span>
+            <span class="cat-pill">效能與規範</span>
           </div>
-          <h3>換你當老闆！AGENTS.md 與 AI 協作工作流</h3>
-          <p>深入剖析 AI Agent ＝ Model ＋ Harness。學會用專案憲法、內容範本與現況白板設計可重複擴充的規則，並診斷你的專案可協作指數。</p>
+          <h3 class="vista-text">GPU 合成圖層效能瓶頸與 AGENTS.md 規範</h3>
+          <p>剖析 <code class="mono">backdrop-filter</code> 在行動裝置引發掉幀的原因，並學會將圖層預算與標準光學配方鎖定於 <code class="mono">AGENTS.md</code> 避免 AI 寫歪。</p>
           <div class="tags">
+            <span class="tag">GPU Compositing</span>
+            <span class="tag">FPS Budget</span>
             <span class="tag">AGENTS.md</span>
-            <span class="tag">Harness</span>
-            <span class="tag">Content-First</span>
           </div>
           <div class="card-foot">
-            <span class="read-time">⏱ 12 分鐘・含診斷室</span>
-            <a class="go-link" href="lessons/agentic-workflow/index.html">進入講義 →</a>
+            <span class="read-time">⏱ 12 分鐘・含效能模擬</span>
+            <a class="go-link" href="lessons/gpu-compositing-and-agents/index.html">進入實驗 →</a>
           </div>
         </article>
 
-        <!-- Soon Placeholder Card -->
-        <article class="card card-soon" id="soonCard">
+        <!-- Unit 04 Backlog Card -->
+        <article class="card-soon" id="soonCard">
           <div class="card-top">
-            <span class="unit-pill unit-pill-soon">UNIT 04・BACKLOG</span>
-            <span class="cat-pill">AI 工作流</span>
+            <span class="unit-pill" style="background:linear-gradient(180deg, #f59e0b 0%, #d97706 100%);">UNIT 04・BACKLOG</span>
+            <span class="cat-pill">表面折射</span>
           </div>
-          <h3>Prompt 工程與結構化輸出</h3>
-          <p>已排入 <code class="mono">NOTES.md</code> 待擴充清單（slug：<code class="mono">prompt-engineering</code>）。你可以直接複製下方標準指令交給 AI，依 <code class="mono">AGENTS.md</code> 自動生成本頁！</p>
+          <h3 class="vista-text">SVG 置換濾鏡與邊緣色散折射</h3>
+          <p>已排入 <code class="mono">NOTES.md</code> 待擴充清單（slug：<code class="mono">svg-refraction-displacement</code>）。一鍵複製指令給 AI，即可依 <code class="mono">AGENTS.md</code> 自動長出第 4 頁！</p>
           <div class="tags">
-            <span class="tag">Few-shot</span>
-            <span class="tag">JSON Schema</span>
+            <span class="tag">feDisplacementMap</span>
+            <span class="tag">Chromatic Dispersion</span>
             <span class="tag">待 AI 擴充</span>
           </div>
           <button type="button" class="copy-btn" data-copy-target="extendPromptText">
@@ -900,106 +896,148 @@
           </button>
         </article>
 
-        <div class="empty-state" id="emptyState">
-          <p style="font-weight:800; font-size:18px; margin-bottom:6px;">找不到符合條件的講義單元</p>
-          <p style="color:var(--ink-secondary); font-size:14px; margin-bottom:14px;">試試看清除搜尋關鍵字，或切回「全部」分類。</p>
-          <button type="button" class="btn btn-secondary" id="resetFilterBtn">重設篩選條件</button>
+        <div class="glass-panel empty-state" id="emptyState">
+          <p class="vista-text" style="font-size:18px; margin-bottom:8px;">找不到符合關鍵字的光學單元</p>
+          <p style="font-size:14px; margin-bottom:14px;">試著搜尋 <code class="mono">saturate</code>、<code class="mono">inset</code>、<code class="mono">vista</code> 或重設篩選條件。</p>
+          <button type="button" class="aero-btn aero-btn-secondary" id="resetFilterBtn">重設全部顯示</button>
         </div>
       </div>
     </section>
 
-    <!-- AGENTS.md Workflow & Rule Mapping -->
-    <section class="section" id="architecture">
-      <div class="arch-box">
-        <div class="section-head" style="margin-bottom:8px;">
-          <div>
-            <h2 class="section-title">📐 專案規則對照：AGENTS.md 如何幫 AI 繼續做下去？</h2>
-            <p class="section-sub">本網站的每一個顏色、路徑與頁面結構都不是碰巧的，而是嚴格對應根目錄 <code class="mono">AGENTS.md</code>（與同步的 <code class="mono">CLAUDE.md</code>）的產物。</p>
-          </div>
+    <!-- AGENTS.md & CSS Standard Showcase -->
+    <section class="sec" id="architecture">
+      <div class="glass-panel arch-panel">
+        <div class="sec-head">
+          <h2 class="sec-title vista-text">📐 AGENTS.md 規範對照與標準 <code class="mono">.glass-panel</code> 程式碼</h2>
+          <p class="sec-sub" style="text-shadow:none;">這座網站的每一塊毛玻璃都不是 AI 臨場亂湊的，而是嚴格執行根目錄 <code class="mono">AGENTS.md</code> 與 <code class="mono">CLAUDE.md</code> 的標準規格。</p>
         </div>
 
-        <div class="workflow-steps">
-          <div class="step-card">
+        <div class="workflow-grid">
+          <div class="step-box">
             <span class="step-num">STEP 1</span>
-            <h4>先讀憲法與白板</h4>
-            <p>AI 接手後先讀取 <code class="mono">AGENTS.md</code>、<code class="mono">NOTES.md</code> 與 <code class="mono">log.md</code>，掌握色票、目前進度與待辦 Backlog。</p>
+            <h4>讀憲法與現況白板</h4>
+            <p>AI 先讀取 <code class="mono">AGENTS.md</code>、<code class="mono">NOTES.md</code> 與 <code class="mono">log.md</code>，鎖定五大光學 CSS 與 GPU 預算。</p>
           </div>
-          <div class="step-card">
+          <div class="step-box">
             <span class="step-num">STEP 2</span>
-            <h4>內容先行撰寫原稿</h4>
-            <p>複製 <code class="mono">notes/_template.md</code> 建立 <code class="mono">notes/&lt;slug&gt;.md</code>，先確認知識結構與測驗題庫，再動手寫網頁。</p>
+            <h4>內容先行寫定原稿</h4>
+            <p>複製 <code class="mono">notes/_template.md</code> 建立 <code class="mono">notes/&lt;slug&gt;.md</code>，先確立光學原理與 3 題測驗。</p>
           </div>
-          <div class="step-card">
+          <div class="step-box">
             <span class="step-num">STEP 3</span>
-            <h4>生成五段式單檔頁</h4>
-            <p>依照鎖定色票與固定五段式骨架產出 <code class="mono">lessons/&lt;slug&gt;/index.html</code>，確保含原生 JS 互動實驗室。</p>
+            <h4>生成五段式光學網頁</h4>
+            <p>套用標準 <code class="mono">.glass-panel</code>、<code class="mono">::before</code> 50% 切面與 <code class="mono">.vista-text</code> 產出獨立單檔 HTML。</p>
           </div>
-          <div class="step-card">
+          <div class="step-box">
             <span class="step-num">STEP 4</span>
-            <h4>串接首頁並交接</h4>
-            <p>把新卡片加入首頁 <code class="mono">index.html</code>、更新前後單元導覽，最後更新 <code class="mono">NOTES.md</code> 與 <code class="mono">log.md</code>。</p>
+            <h4>串接首頁與紀錄交接</h4>
+            <p>加入首頁卡片、更新前後頁相對路徑，並寫回 <code class="mono">NOTES.md</code> 與 <code class="mono">log.md</code>。</p>
           </div>
         </div>
 
-        <div class="rule-grid" id="extend-prompt">
+        <div class="code-and-rules" id="extend-spec">
           <div class="rule-table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>AGENTS.md 規範項目</th>
-                  <th>具體約束內容</th>
-                  <th>在網頁上的對應成果</th>
+                  <th>五大光學技巧</th>
+                  <th>對應 CSS 核心屬性</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td><strong>品牌色票鎖定</strong></td>
-                  <td>固定 <code class="mono">#FAF7F2</code> 米白底、<code class="mono">#4F46E5</code> 靛藍與 <code class="mono">2px solid #1E293B</code></td>
-                  <td>首頁與 3 個單元頁維持一致的暖調學術卡片風格</td>
+                  <td><strong>1. 模糊＋鮮豔補償</strong></td>
+                  <td><code class="mono">backdrop-filter: blur(20px) saturate(190%)</code> 拯救發灰濁背景</td>
                 </tr>
                 <tr>
-                  <td><strong>三處 Slug 對齊</strong></td>
-                  <td>英文 kebab-case 貫穿 <code class="mono">notes/</code>、<code class="mono">lessons/</code> 與卡片連結</td>
-                  <td>乾淨無中文亂碼的 GitHub Pages 網址結構</td>
+                  <td><strong>2. 物理厚度倒角</strong></td>
+                  <td><code class="mono">border-top/left</code> 高亮＋<code class="mono">inset 0 1px 0</code> 1px 高光切角</td>
                 </tr>
                 <tr>
-                  <td><strong>五段式教學骨架</strong></td>
-                  <td>導覽 → TL;DR → 3 張觀念卡＋誤區 → 互動實驗室 → 3 題測驗</td>
-                  <td>每個新頁面天然具備一致且可互動的學習體驗</td>
+                  <td><strong>3. Vista 鏡面切面</strong></td>
+                  <td><code class="mono">::before</code> 設 <code class="mono">height: 50%</code> 非連續漸層切出反射分界線</td>
                 </tr>
                 <tr>
-                  <td><strong>強制相對路徑</strong></td>
-                  <td>禁止 <code class="mono">/</code> 開頭絕對路徑，改用 <code class="mono">../../index.html</code></td>
-                  <td>無論雙擊本機檔案或部署到 GitHub 子路徑都不破圖斷鏈</td>
+                  <td><strong>4. 文字防護光暈</strong></td>
+                  <td><code class="mono">.vista-text</code> 雙層白光 <code class="mono">text-shadow</code> 確保可讀性</td>
+                </tr>
+                <tr>
+                  <td><strong>5. 微觀雜訊＋效能</strong></td>
+                  <td>3% SVG Noise 消弭色帶；內層元件禁嵌套模糊保 60fps</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          <div class="prompt-panel">
-            <div class="prompt-panel-head">
-              <span>⚡ 給 AI 的一鍵擴充指令（Unit 04）</span>
-              <button type="button" class="filter-btn" style="padding:4px 10px; font-size:12px;" data-copy-target="extendPromptText">複製指令</button>
+          <div class="dark-code-card">
+            <div class="code-head">
+              <span>💎 AGENTS.md 基準 `.glass-panel` 程式碼</span>
+              <button type="button" class="filter-btn" style="padding:4px 10px; font-size:12px;" data-copy-target="standardCssCode">複製 CSS</button>
             </div>
-            <div class="prompt-code" id="extendPromptText">請先閱讀專案根目錄的 AGENTS.md、NOTES.md 與 log.md。我想新增 Unit 04，主題為「Prompt 工程與結構化輸出」（slug：prompt-engineering，分類：AI 工作流）。請嚴格依照 AGENTS.md 的 4 步標準工作流：先依 notes/_template.md 建立 notes/prompt-engineering.md，再生成五段式互動講義 lessons/prompt-engineering/index.html（含專屬原生 JS 互動實驗室與 3 題測驗），接著更新 index.html 首頁卡片與上一單元的導覽連結，最後更新 NOTES.md 與 log.md。</div>
-            <div class="file-tree">genai-wiki-hub/
-├── index.html
-├── AGENTS.md / CLAUDE.md
-├── NOTES.md / log.md
-├── notes/
-│   ├── _template.md
-│   └── &lt;slug&gt;.md
-└── lessons/
-    └── &lt;slug&gt;/index.html</div>
+            <pre class="css-spec" id="standardCssCode">.glass-panel {
+  position: relative;
+  width: 400px;
+  padding: 24px;
+  border-radius: 16px;
+  overflow: hidden;
+
+  /* 1. 表面微透光基底 */
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+
+  /* 2. 毛玻璃與彩度增強（核心） */
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+
+  /* 3. 光學倒角：頂部左側亮，底部右側暗 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.7);
+  border-left-color: rgba(255, 255, 255, 0.5);
+
+  /* 4. 實體厚度與陰影 */
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+.vista-text {
+  color: #1c1c1e;
+  font-weight: 600;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.9),
+    0 0 16px rgba(255, 255, 255, 0.5);
+}</pre>
+            <div class="code-head" style="margin-bottom:6px;">
+              <span>⚡ Unit 04 一鍵擴充 Prompt</span>
+              <button type="button" class="filter-btn" style="padding:3px 9px; font-size:11.5px;" data-copy-target="extendPromptText">複製 Prompt</button>
+            </div>
+            <div class="prompt-box" id="extendPromptText">請先閱讀專案根目錄的 AGENTS.md、NOTES.md 與 log.md。我想新增 Unit 04，主題為「SVG 置換濾鏡與邊緣色散折射」（slug：svg-refraction-displacement，分類：表面折射）。請嚴格依照 AGENTS.md 的 4 步標準工作流：先依 notes/_template.md 建立 notes/svg-refraction-displacement.md，再生成套用 .glass-panel 規範的五段式互動講義 lessons/svg-refraction-displacement/index.html（含原生 JS 互動實驗室與 3 題測驗），接著更新 index.html 首頁卡片與上一單元的導覽連結，最後更新 NOTES.md 與 log.md。</div>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <footer class="wrap">
-    <span><strong>GenAI Atelier &amp; Study Wiki</strong>｜以 <code class="mono">AGENTS.md</code> 驅動的可持續擴充知識庫</span>
-    <span>TAICA 生成式 AI 第九週實作專案・純靜態零建置架構</span>
+  <footer class="wrap glass-panel">
+    <span class="vista-text">Aero Glass &amp; Optical UI Wiki｜以 <code class="mono">AGENTS.md</code> 鎖定光學規範與效能預算</span>
+    <span>TAICA 生成式 AI 第九週實作專案</span>
   </footer>
 
   <script>
@@ -1031,7 +1069,6 @@
           }
         });
 
-        // Show placeholder soon-card when viewing all without search query
         if (activeCategory === 'all' && keyword === '') {
           soonCard.classList.remove('hidden');
         } else {
@@ -1061,7 +1098,6 @@
         applyFilters();
       });
 
-      // Copy AI expansion prompt with fallback
       document.querySelectorAll('[data-copy-target]').forEach((btn) => {
         btn.addEventListener('click', () => {
           const target = document.getElementById(btn.getAttribute('data-copy-target'));
@@ -1071,7 +1107,7 @@
 
           const markCopied = () => {
             btn.classList.add('copied');
-            btn.innerText = '✅ 已複製擴充指令！';
+            btn.innerText = '✅ 已複製！';
             setTimeout(() => {
               btn.classList.remove('copied');
               btn.innerText = originalLabel;
@@ -1099,7 +1135,7 @@
           document.execCommand('copy');
           onDone();
         } catch (e) {
-          alert('請手動選取下方指令文字複製。');
+          alert('請手動選取文字複製。');
         }
         document.body.removeChild(textarea);
       }

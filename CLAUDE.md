@@ -1,65 +1,125 @@
-# CLAUDE.md — GenAI 實戰講義與 LLM Wiki 知識庫（專案開發規範）
+# CLAUDE.md — Aero Glass 與介面光學設計知識庫（專案開發憲法）
 
-> 本文件（`CLAUDE.md`）與根目錄的 `AGENTS.md` 內容完全同步，旨在確保 Claude Code、Claude Cowork、Antigravity、Cursor 等不同 AI 代理都能無縫讀取同一套專案開發規範。
+> 本文件（`CLAUDE.md`）與根目錄的 `AGENTS.md` 內容完全同步，旨在確保 Claude Code、Claude Cowork、Antigravity、Cursor 等不同 AI 工具都能讀懂同一套光學介面規範與擴充流程。
 > **任何開發或擴充任務開始前，請先依序閱讀：`AGENTS.md`（或本檔）→ `NOTES.md` → `log.md`。**
 
 ---
 
 ## 一、專案目的與核心理念
 
-本專案是一個專為生成式 AI 學習者打造的 **「可持續擴充式互動講義與 LLM Wiki 知識庫」**，並作為可部署於 GitHub Pages 的純靜態網站。
+本專案是一個專為前端設計師與工程師打造的 **「Aero Glass × Apple Liquid Glass 光學介面實作與理論知識庫」**，並以純靜態網頁部署於 GitHub Pages。
 
-與一次性的 Vibe Coding（「只把單一頁面做出來」）不同，本專案的核心目標是建立一套 **高可讀性、低耦合、可重複複製的生產規則**：
+與一次性的 Vibe Coding（「只把單一頁面做出來」）不同，本專案透過明確的 **物理光學 CSS 規範** 與 **可持續擴充架構**，確保無論未來新增第 4 個還是第 10 個單元，整座知識庫的光學質感與教學骨架都保持高度一致：
 
-1. **內容先行（Content-First）**：所有知識單元都必須先在 `notes/<slug>.md` 完成結構化的 Markdown 知識原稿（LLM Wiki 筆記層），才生成對應的 `lessons/<slug>/index.html`（網頁成品層）。AI 不可跳過原稿直接生出 HTML。
-2. **Self-Contained 單檔獨立架構**：每一個講義單元頁 `lessons/<slug>/index.html` 都必須是可獨立運作的單一 HTML 檔案——所有版面 CSS 與互動實驗室 JavaScript 一律內嵌於該檔案中（外部僅允許載入 Google Fonts），不依賴任何建置工具（Webpack/Vite）、不需後端伺服器、不需 API Key 即可直接在瀏覽器體驗。
-3. **繁體中文語境與教學溫度**：全站使用臺灣繁體中文慣用術語，中文行文一律使用**全形標點符號**（，。、：「」！？（）），專有名詞或程式碼才使用半形英文與等寬字體標記。
+1. **內容先行（Content-First）**：所有知識單元都必須先在 `notes/<slug>.md` 完成結構化的 Markdown 原稿，才生成對應的 `lessons/<slug>/index.html`。AI 不可跳過原稿直接生出 HTML。
+2. **Self-Contained 單檔獨立架構**：每一個單元頁 `lessons/<slug>/index.html` 都必須是單一自給自足的 HTML 檔案——所有光學 CSS、SVG 雜訊與原生 JavaScript 實驗室皆內嵌於該檔案中（外部僅允許載入 Google Fonts），不依賴建置工具或後端 API。
+3. **臺灣繁體中文語境**：行文使用臺灣繁體中文慣用術語與全形標點符號（，。、：「」！？（）），專有名詞或 CSS 屬性則使用等寬字體標記。
 
 ---
 
-## 二、網頁整體視覺風格與設計系統（Brand & Design Tokens）
+## 二、網頁整體視覺風格與五大關鍵 CSS 光學規範
 
-全站統一採用 **「暖調學術實驗室風（Warm Technical Atelier）」**：以溫暖米白紙感為底，搭配深岩灰粗線框（2px solid）與微偏移硬陰影（Neobrutalist-lite 卡片感），兼顧筆記本的閱讀親和力與工程實驗室的精準結構。
+全站統一採用 **「Vista Aero × Apple Liquid Glass 光學毛玻璃設計系統」**：以充滿深海極光與水彩光暈的流體背景襯托半透明 `.glass-panel` 容器，重現物理玻璃的厚度、折射與微觀磨砂觸感。
 
-### 1. 固定色票（CSS Variables，嚴禁擅自替換）
+### 1. 色彩與底層流體背景（Vibrant Mesh Backdrop）
 
-所有 HTML 頁面（首頁與各單元頁）的 `:root` 必須包含並使用以下 CSS 變數：
+毛玻璃需要色彩豐富的底層畫面才能展現折射深度，嚴禁使用死板純白或單調全黑背景。
 
 ```css
 :root {
-  --bg-cream: #FAF7F2;          /* 全站暖米白紙質背景 */
-  --bg-card: #FFFFFF;           /* 卡片與內容區塊純白底 */
-  --bg-subtle: #F2ECE1;         /* 次要區塊、程式碼或提示底色 */
-  --ink-primary: #1E293B;       /* 主標題與高對比文字／邊框線色 */
-  --ink-secondary: #475569;     /* 內文說明、副標題與次要資訊 */
-  --accent-indigo: #4F46E5;     /* 主強調色：互動按鈕、核心標籤、連結 */
-  --accent-indigo-soft: #EEF2FF;/* 靛藍淺底：核心觀念亮點區 */
-  --accent-amber: #F59E0B;      /* 警告、重點提示與待擴充強調色 */
-  --accent-amber-soft: #FEF3C7; /* 琥珀淺底：TL;DR 或常見誤區提醒 */
-  --accent-emerald: #10B981;    /* 正確答案、已完成狀態與正向指標 */
-  --accent-rose: #F43F5E;       /* 錯誤選項、反面教材與風險警示 */
-  --border-strong: 2px solid #1E293B;
-  --shadow-card: 5px 5px 0px rgba(30, 41, 59, 0.12);
+  --bg-deep: #0b192c;
+  --aurora-cyan: #0ea5e9;
+  --aurora-teal: #14b8a6;
+  --aurora-indigo: #4f46e5;
+  --aurora-aqua: #38bdf8;
+  --ink-dark: #1c1c1e;
+  --ink-body: #1e293b;
+  --ink-muted: #475569;
+  --glass-bg-top: rgba(255, 255, 255, 0.28);
+  --glass-bg-bottom: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.22);
+  --glass-border-top: rgba(255, 255, 255, 0.72);
+  --glass-border-left: rgba(255, 255, 255, 0.52);
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
 }
 ```
 
-### 2. 字體規範（Google Fonts）
+### 2. 五大關鍵 CSS 光學技巧（核心規格，必須實作於全站容器）
+
+1. **背景模糊與鮮豔度補償（Blur + Saturate Compensation）**
+   - 單純使用 `blur()` 會讓透出來的底層背景發灰濁；必須同時使用 `backdrop-filter: blur(20px) saturate(190%)`（與 `-webkit-backdrop-filter`），強迫提升底層色彩飽和度，重現通透清亮感。
+2. **物理厚度與倒角光線（Optical Bevel & Inset Thickness）**
+   - 頂部與左側邊框設定高透明度白光（`border-top-color: rgba(255, 255, 255, 0.7)`、`border-left-color: rgba(255, 255, 255, 0.5)`），右側與底部維持極淡邊框（`rgba(255, 255, 255, 0.2)`）。
+   - 疊加外層擴散陰影與 1px 內側上下高光／暗角：`box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.8), inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);`
+3. **表面折射與高光切面（Vista Specular 50% Cut）**
+   - 使用 `.glass-panel::before` 偽元素（`height: 50%`、`pointer-events: none`）搭配線性漸層 `linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 100%)`，在 50% 處產生非連續性階躍，切出 Vista Aero 經典的上半部鏡面反射光斑分界線。
+4. **Vista 風格的文字光暈（`.vista-text` Halo）**
+   - 標題與半透明背景上的關鍵深色文字（`color: #1c1c1e`）加上雙層白光防護：`text-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 16px rgba(255, 255, 255, 0.5);`，避免背景彩光干擾辨識度。
+5. **玻璃微觀雜訊（SVG Noise Data URI）**
+   - 利用內嵌 SVG `feTurbulence` Noise Data URI 作為微觀背景層，將不透明度壓低至 `2%～4%`（`opacity: 0.03`），消弭大面積漸層的色階斷裂（Banding），注入細緻的磨砂實體觸感。
+
+### 3. 標準 `.glass-panel` 基準程式碼（所有主要面板與卡片皆須遵循）
+
+```css
+.glass-panel {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur(20px) saturate(190%);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top-color: rgba(255, 255, 255, 0.7);
+  border-left-color: rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+}
+
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.4) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  pointer-events: none;
+}
+
+.vista-text {
+  color: #1c1c1e;
+  font-weight: 600;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.9),
+    0 0 16px rgba(255, 255, 255, 0.5);
+}
+```
+
+### 4. GPU 合成效能預算守則（Performance Guardrail）
+
+`backdrop-filter` 會強迫瀏覽器開闢獨立的 GPU 合成圖層，並在底層內容變更時進行即時重繪：
+- **禁止無限嵌套**：外層已啟用 `backdrop-filter` 的 `.glass-panel` 內部次級子卡片，應改用高通透半透明實底（例如 `rgba(255, 255, 255, 0.58)` 搭配細白邊框），避免同區域疊加多層即時模糊造成低階行動裝置 FPS 下滑。
+- **避免滾動視差大面積動畫疊加模糊**：背景極光裝飾維持靜態或極低成本位移，不與大面積 `blur()` 動畫同時重繪。
+
+### 5. 字體規範（Google Fonts）
 
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
 ```
-
-- **英文標題／數字／徽章**：`'Plus Jakarta Sans', 'Noto Sans TC', sans-serif`
-- **中文內文**：`'Noto Sans TC', 'Plus Jakarta Sans', sans-serif`
-- **程式碼／Slug／檔案路徑**：`'JetBrains Mono', monospace`
-
-### 3. 背景與元件視覺語言
-
-- **點陣格紋底**：`body` 背景色為 `var(--bg-cream)`，疊加細微點陣格紋 `radial-gradient(#D8CFC2 1.2px, transparent 1.2px)`（間距 `24px 24px`）。
-- **卡片規範**：圓角 `16px`、邊框 `var(--border-strong)`、陰影 `var(--shadow-card)`；互動卡片 Hover 時位移 `translate(-2px, -2px)` 並加深陰影。
-- **響應式要求**：所有頁面必須支援手機與桌面瀏覽（版心最大寬度 `1080px`、水平置中、`padding: 0 20px`），避免任何水平捲軸溢出。
 
 ---
 
@@ -68,43 +128,36 @@
 ### 1. 專案目錄樹
 
 ```text
-genai-wiki-hub/                 ← GitHub Repository 根目錄（GitHub Pages 部署根目錄）
-├── index.html                  ← 知識庫總覽首頁（含篩選、搜尋、單元卡片與擴充指南）
-├── AGENTS.md                   ← 核心 AI 協作規範
-├── CLAUDE.md                   ← 本文件（與 AGENTS.md 同步）
-├── README.md                   ← GitHub Repository 說明文件
-├── NOTES.md                    ← 現況白板：目前完成進度、待擴充 Backlog、交接備忘
-├── log.md                      ← 決策與變更紀錄：只增不刪的重大架構與上線紀錄
-├── .nojekyll                   ← 停用 Jekyll，確保靜態網站與資料夾直接對外提供服務
-├── .gitignore                  ← 忽略作業系統暫存檔與編輯器暫存檔
-├── notes/                      ← 【內容先行層 / LLM Wiki 原稿】
-│   ├── _template.md            ← 新增單元時必用的 Markdown 標準範本
-│   ├── rag-architecture.md     ← 單元 01 原稿
-│   ├── reflection-agent.md     ← 單元 02 原稿
-│   └── agentic-workflow.md     ← 單元 03 原稿
-└── lessons/                    ← 【網頁成品層】每個單元一個獨立資料夾
-    ├── rag-architecture/
-    │   └── index.html          ← 單元 01 互動講義頁
-    ├── reflection-agent/
-    │   └── index.html          ← 單元 02 互動講義頁
-    └── agentic-workflow/
-        └── index.html          ← 單元 03 互動講義頁
+genai-wiki-hub/                         ← GitHub Repository 根目錄（GitHub Pages 部署根目錄）
+├── index.html                          ← 光學知識庫首頁（分類篩選、搜尋、3 單元卡片與完整程式碼展示）
+├── AGENTS.md                           ← 核心專案憲法
+├── CLAUDE.md                           ← 本文件（與 AGENTS.md 完全同步）
+├── README.md                           ← GitHub Repository 說明文件
+├── NOTES.md                            ← 現況白板：目前進度、待擴充 Backlog、交接備忘
+├── log.md                              ← 決策與變更紀錄：只增不刪的架構演進歷史
+├── .nojekyll                           ← 停用 Jekyll，確保純靜態部署
+├── .gitignore                          ← 忽略暫存檔
+├── notes/                              ← 【內容先行層 / 光學設計原稿】
+│   ├── _template.md                    ← 新增單元時必用的 Markdown 標準範本
+│   ├── blur-and-saturation.md          ← Unit 01 原稿：背景模糊、鮮豔度補償與 SVG 磨砂雜訊
+│   ├── bevel-and-refraction.md         ← Unit 02 原稿：物理厚度、倒角光線與 Vista 鏡面切面
+│   └── gpu-compositing-and-agents.md   ← Unit 03 原稿：GPU 合成效能瓶頸與 AGENTS.md 規範
+└── lessons/                            ← 【網頁成品層】每個單元一個獨立資料夾
+    ├── blur-and-saturation/
+    │   └── index.html                  ← Unit 01 互動講義頁
+    ├── bevel-and-refraction/
+    │   └── index.html                  ← Unit 02 互動講義頁
+    └── gpu-compositing-and-agents/
+        └── index.html                  ← Unit 03 互動講義頁
 ```
 
-### 2. 命名慣例（Slug Consistency）
+### 2. 命名與相對路徑鐵則
 
-- 所有 `<slug>` **一律使用英文小寫與連字號（kebab-case）**，例如 `rag-architecture`、`prompt-engineering`，禁止空白、大寫字母或中文字元（確保 GitHub Pages URL 友善）。
-- **三處對齊原則**：每新增一個學習單元，以下三個位置的 `<slug>` 必須完全一致：
-  1. 原稿路徑：`notes/<slug>.md`
-  2. 網頁路徑：`lessons/<slug>/index.html`
-  3. 首頁卡片連結：根目錄 `index.html` 中指向 `lessons/<slug>/index.html`
-
-### 3. 路徑引用鐵則（GitHub Pages 相對路徑）
-
-因為專案可能部署在 `https://<username>.github.io/<repo-name>/` 子路徑下，**全站嚴禁使用以 `/` 開頭的根絕對路徑（例如 `/lessons/...`）**，一律使用相對路徑：
-- 首頁連結至單元頁：`lessons/<slug>/index.html`
-- 單元頁返回首頁：`../../index.html`
-- 單元頁連結至前／後單元：`../<other-slug>/index.html`
+- 所有 `<slug>` **一律使用英文小寫與連字號（kebab-case）**，且 `notes/<slug>.md`、`lessons/<slug>/index.html`、`index.html` 卡片連結三處完全一致。
+- **嚴禁使用 `/` 開頭的根絕對路徑**：
+  - 首頁連至單元：`lessons/<slug>/index.html`
+  - 單元返回首頁：`../../index.html`
+  - 單元連至前後單元：`../<other-slug>/index.html`
 
 ---
 
@@ -112,68 +165,44 @@ genai-wiki-hub/                 ← GitHub Repository 根目錄（GitHub Pages �
 
 ### 1. 首頁（`index.html`）結構
 
-1. **頂部品牌列（Topbar）**：專案標誌 `GenAI Atelier`、副標「LLM Wiki × 互動講義庫」、快速連往 `AGENTS.md` / GitHub 說明區的錨點。
-2. **Hero 區與知識庫統計**：主標題、專案宗旨介紹，以及動態或結構化的統計徽章（已完成單元數、互動實驗室數、規則版本）。
-3. **分類篩選與即時搜尋列**：
-   - 分類按鈕：依 `data-category` 篩選（例如「全部」、「檢索增強」、「Agent 架構」、「AI 工作流」）。
-   - 即時搜尋框：可依單元標題、摘要或標籤即時過濾卡片。
-4. **單元卡片網格（`.lesson-grid`）**：
-   - 每張已完成卡片顯示：單元編號膠囊（`UNIT 01`）、分類標籤、標題、一句話摘要、關鍵字 Tags、預估閱讀時間、前往閱讀按鈕。
-   - 網格末尾保留 1 張 **虛線待擴充預留卡（`.card-soon`）**，顯示下一個建議新增的單元（來自 `NOTES.md` 的 Backlog），並附帶「一鍵複製 AI 擴充指令」按鈕。
-5. **`AGENTS.md` 規則對照與協作流程區**：視覺化展示本網站如何透過 `AGENTS.md` + `notes/_template.md` + `NOTES.md` 實現永續擴充。
+1. **Sticky Aero 導覽列**：`Aero Glass Wiki` 品牌標章、章節錨點。
+2. **Hero 光學展示面板（`.glass-panel`）**：含 `.vista-text` 主標、專案核心主張與即時統計儀表（已上線單元、光學實驗室、測驗題數、GPU 預算合規率）。
+3. **分類篩選與搜尋列**：分類按鈕（「全部」、「光學基底」、「表面折射」、「效能與規範」）與關鍵字即時搜尋。
+4. **單元卡片網格（`.lesson-grid`）**：每張卡片套用 `.glass-panel` 物理倒角與鏡面反光切面，末尾保留 1 張虛線待擴充預留卡（`.card-soon`），支援一鍵複製 Unit 04 擴充指令。
+5. **`AGENTS.md` 規則對照與 `.glass-panel` 標準程式碼區**：直接展示可一鍵複製的標準 CSS 範例與四步擴充流程。
 
 ### 2. 單元講義頁（`lessons/<slug>/index.html`）固定五段式結構
 
-每一個單元網頁都必須嚴格遵守以下五段式骨架，確保學習體驗一致：
-
-1. **第一段：頂部導覽與麵包屑列（Sticky Topbar）**
-   - 左側：`← 返回知識庫首頁`（`../../index.html`）與麵包屑 `首頁 / <分類> / Unit XX`。
-   - 右側：快速跳轉錨點（`核心觀念`、`互動實驗室`、`隨堂檢測`）。
-2. **第二段：單元標頭與「一句話核心觀念（TL;DR）」**
-   - 單元編號膠囊、分類徽章、閱讀時間、主標題與副標題。
-   - 使用 `--accent-amber-soft` 底色與粗邊框呈現的 **TL;DR 摘要框**，讓學生 10 秒內掌握本單元核心價值。
-3. **第三段：核心觀念拆解（Concept Cards ＋ 常見誤區提醒）**
-   - 至少包含 **3 張結構化觀念卡片**（例如架構流程、步驟拆解、優缺點比較表或程式碼對照）。
-   - 至少包含 **1 個「常見誤區／地雷提醒（Pitfall Alert）」** 區塊，點出初學者最常犯錯的地方。
-4. **第四段：原生 JS 互動實驗室（Interactive Lab）**
-   - **本專案最大特色**：每個單元必須設計一個貼合該主題的 **免 API Key 原生 JavaScript 互動模擬器**（例如滑桿調整參數、步驟切換器、情境診斷勾選表等），並以視覺化面板即時呈現輸出變化。
-   - 狀態一律保存於 JS 記憶體變數中，不依賴 `localStorage` 或外部 API。
-5. **第五段：隨堂自我檢測（Quiz）與頁尾導覽（Prev / Next）**
-   - 包含 **3 題單選題**，使用者點擊選項後立即批改（顯示正確 `--accent-emerald` 或錯誤 `--accent-rose` 樣式）並展開「解析說明」。
-   - 頁面底部提供「上一單元」與「下一單元」導覽按鈕（沒有則顯示返回首頁）。
+1. **第一段：Sticky Aero 導覽列與麵包屑**（`← 返回知識庫首頁`、`首頁 / <分類> / Unit XX`、章節跳轉連結）。
+2. **第二段：單元標頭與「一句話核心觀念（TL;DR）」**（單元編號膠囊、閱讀時間、毛玻璃摘要框）。
+3. **第三段：核心觀念拆解**（至少 **3 張** 結構化觀念卡片＋ **1 個常見誤區／效能地雷提醒框**）。
+4. **第四段：原生 JS 互動光學實驗室（Interactive Lab）**（免 API Key 即時調整光學參數、CSS 預覽與即時程式碼輸出，狀態存於 JS 記憶體）。
+5. **第五段：隨堂自我檢測（3 題單選題，點擊即時批改＋詳解）與頁尾前後單元導覽**。
 
 ---
 
-## 五、新增內容時要遵守的格式與 4 步標準工作流
+## 五、新增內容時要遵守的 4 步標準工作流
 
-當使用者要求「新增一個單元」或「擴充新頁面」時，AI 必須嚴格依照以下 4 個步驟執行，不可遺漏：
+當使用者要求「新增一個單元」時，AI 必須嚴格依照以下 4 步執行：
 
-- **Step 1：撰寫知識原稿（內容先行）**
-  - 複製 `notes/_template.md` 的格式，建立 `notes/<new-slug>.md`。
-  - 填寫完整 Meta 資訊（單元編號、標題、Slug、分類、閱讀時間、標籤）與五段式正文、互動實驗室規格及 3 題測驗題庫。
-- **Step 2：生成獨立網頁成品**
-  - 嚴格遵循 `AGENTS.md` 第二節色票字體與第四節五段式結構，生成 `lessons/<new-slug>/index.html`。
-  - 所有 CSS 與互動 JS 皆內嵌於該 `index.html` 中，確定互動實驗室與隨堂測驗皆可正常運作。
-- **Step 3：更新首頁與單元間導覽連結**
-  - 在根目錄 `index.html` 的 `.lesson-grid` 中（於 `.card-soon` 之前）加入新單元的卡片，確認 `data-category` 與篩選按鈕一致（若是新分類則同步新增篩選按鈕與統計數字）。
-  - 更新前一單元的「下一單元」連結，確保學習路徑串聯完整；並更新 `.card-soon` 指向下一個待辦單元。
-- **Step 4：更新管理紀錄（白板與歷史）**
-  - 更新 `NOTES.md`：將新單元移入「已完成單元清單」，從待辦 Backlog 移除，並更新最新進度摘要。
-  - 更新 `log.md`：在檔案最上方或紀錄區尾端追加一筆日期、變更內容與影響檔案之紀錄（不可刪除舊紀錄）。
+- **Step 1：撰寫知識原稿（內容先行）** — 複製 `notes/_template.md` 建立 `notes/<new-slug>.md`，完成 Meta、TL;DR、3 張觀念卡、誤區、互動實驗室規格與 3 題測驗。
+- **Step 2：生成獨立光學網頁成品** — 嚴格套用本檔第二節 `.glass-panel`、`.vista-text`、SVG Noise 與 GPU 預算守則，依五段式骨架生成 `lessons/<new-slug>/index.html`。
+- **Step 3：更新首頁與單元間導覽連結** — 在 `index.html` 的 `.lesson-grid` 中（`.card-soon` 之前）加入新單元卡片，更新前一單元的「下一單元」連結與 `.card-soon` 待辦目標。
+- **Step 4：更新管理紀錄** — 更新 `NOTES.md`（將新單元移入已完成區）與 `log.md`（只增不刪地寫入上線紀錄）。
 
 ### 給 AI 的一鍵擴充 Prompt 範本
 
-> 「請先閱讀專案根目錄的 `AGENTS.md`、`NOTES.md` 與 `log.md`。我想新增 Unit 04，主題為『Prompt 工程與結構化輸出』（slug：`prompt-engineering`，分類：`AI 工作流`）。請嚴格依照 `AGENTS.md` 的 4 步標準工作流：先依 `notes/_template.md` 建立 `notes/prompt-engineering.md`，再生成五段式互動講義 `lessons/prompt-engineering/index.html`（含專屬原生 JS 互動實驗室與 3 題測驗），接著更新 `index.html` 首頁卡片與上一單元的導覽連結，最後更新 `NOTES.md` 與 `log.md`。」
+> 「請先閱讀專案根目錄的 `AGENTS.md`、`NOTES.md` 與 `log.md`。我想新增 Unit 04，主題為『SVG 置換濾鏡與邊緣色散折射』（slug：`svg-refraction-displacement`，分類：`表面折射`）。請嚴格依照 `AGENTS.md` 的 4 步標準工作流：先依 `notes/_template.md` 建立 `notes/svg-refraction-displacement.md`，再生成套用 `.glass-panel` 規範的五段式互動講義 `lessons/svg-refraction-displacement/index.html`（含原生 JS 互動實驗室與 3 題測驗），接著更新 `index.html` 首頁卡片與上一單元的導覽連結，最後更新 `NOTES.md` 與 `log.md`。」
 
 ---
 
 ## 六、AI 修改或新增內容時必須遵守的 8 條鐵則
 
-1. **先讀憲法與白板**：開始任何任務前，必先讀取 `AGENTS.md`、`NOTES.md` 與 `log.md`。
-2. **內容先行不可跳過**：必須先有 `notes/<slug>.md` 原稿，才允許生成或大幅修改 `lessons/<slug>/index.html`；日後修改文字也應同步維護原稿與網頁一致。
-3. **鎖定設計系統**：不得擅自更改 `:root` 中的 CSS 色票變數與 Google Fonts 字體設定；卡片框線與陰影風格須全站統一。
-4. **強制相對路徑**：所有 HTML 內部超連結只能使用相對路徑（`lessons/...`、`../../index.html`、`../...`），禁止硬寫網域或 `/` 開頭根路徑。
-5. **單檔 Self-Contained**：每個單元網頁只依賴 Google Fonts，其餘 CSS、SVG 圖示與互動 JS 必須全部寫在同一個 `index.html` 內，確保離線或雙擊檔案也能開啟。
-6. **互動必須真實可用**：第四段的互動實驗室與第五段的隨堂測驗禁止使用假按鈕或靜態圖片替代，必須有真實可點擊的原生 JS 狀態變化與即時回饋。
-7. **全形中文標點與無錯別字**：臺灣繁體中文內文一律使用全形標點符號，並維持清晰親切且具工程準確性的教學口吻。
-8. **收尾必更新白板與紀錄**：每次新增或修改完成後，必須更新 `NOTES.md`（現況與下次接手點）與 `log.md`（變更歷史），並同步檢查 `AGENTS.md` 與 `CLAUDE.md` 是否一致。
+1. **先讀憲法與白板**：動工前必先讀取 `AGENTS.md`、`NOTES.md` 與 `log.md`。
+2. **內容先行不可跳過**：必須先建立 `notes/<slug>.md`，才允許生成或大幅修改 `lessons/<slug>/index.html`。
+3. **嚴守五大光學 CSS 規範**：所有主面板須正確運用 `blur() + saturate()`、左上倒角亮邊與 `inset` 陰影、`::before` 50% 鏡面切面、`.vista-text` 光暈與 2%～4% SVG 雜訊。
+4. **遵守 GPU 合成效能預算**：禁止在已啟用 `backdrop-filter` 的主面板內層再無限嵌套多層即時模糊。
+5. **強制相對路徑**：所有連結僅能使用相對路徑（`lessons/...`、`../../index.html`、`../...`），禁止 `/` 開頭根路徑。
+6. **單檔 Self-Contained**：每個單元頁僅依賴 Google Fonts，其餘 CSS、SVG 雜訊與互動 JS 必須全數內嵌於單一 `index.html`。
+7. **互動必須真實可用**：第四段光學實驗室與第五段測驗必須具備真實的 DOM 與 CSS 即時變化。
+8. **收尾必更新白板與歷史**：完成工作後務必更新 `NOTES.md` 與 `log.md`，並確認 `AGENTS.md` 與 `CLAUDE.md` 保持同步。

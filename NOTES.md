@@ -1,16 +1,16 @@
 # NOTES.md — 專案現況白板
 
-> 本文件為「現況白板」，記錄目前已完成進度、待擴充單元清單（Backlog）與下次接手要點。
-> 每次完成新單元或修改現有頁面後，請務必更新本檔案（已完成的項目請移出待辦區）。
+> 本文件為「現況白板」，記錄目前已完成單元、待擴充光學主題 Backlog 與下次接手提醒。
+> 每次新增或修改單元後，請務必更新本檔案（已完成項目請移出待辦區）。
 
 ---
 
 ## 一、目前狀態摘要
 
 - **最後更新日期**：2026-11-17
-- **專案階段**：基礎架構與首批三個核心單元已全面上線（MVP 完成）
-- **目前線上單元數**：3 個（皆已完成 `notes/<slug>.md` 原稿、`lessons/<slug>/index.html` 互動網頁與首頁卡片串接）
-- **部署備妥狀態**：已包含 `.nojekyll` 與全站相對路徑，可直接推上 GitHub 並開啟 GitHub Pages。
+- **專案主題與版本**：v2.0 — 全面轉型為 **「Aero Glass 與介面光學設計知識庫（Aero Glass & Optical UI Wiki）」**
+- **目前線上單元數**：3 個（全站均已實作 `.glass-panel` 毛玻璃與彩度補償、光學倒角、`::before` 50% 鏡面切面、`.vista-text` 文字光暈與 SVG 微觀雜訊）
+- **部署網址**：https://konayame774.github.io/genai-wiki-hub/
 
 ---
 
@@ -18,30 +18,30 @@
 
 | 單元編號 | Slug | 單元標題 | 分類 | 原稿狀態 | 網頁與互動實驗室 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| Unit 01 | `rag-architecture` | RAG 檢索增強生成原理與實務 | 檢索增強 | ✅ 已定稿 | ✅ RAG 檢索與 Chunk Size 模擬器 + 3 題測驗 |
-| Unit 02 | `reflection-agent` | Reflection 反思型 Agent 架構與設計 | Agent 架構 | ✅ 已定稿 | ✅ 三階段演化模擬器（Drafter → Critic → Refiner）+ 3 題測驗 |
-| Unit 03 | `agentic-workflow` | 換你當老闆！AGENTS.md 與 AI 協作工作流 | AI 工作流 | ✅ 已定稿 | ✅ Vibe Coding vs. Agentic Work 規則診斷室 + 3 題測驗 |
+| Unit 01 | `blur-and-saturation` | 背景模糊、鮮豔度補償與玻璃微觀雜訊 | 光學基底 | ✅ 已定稿 | ✅ 毛玻璃光學調校實驗台（`blur`、`saturate`、SVG 雜訊即時調參）+ 3 題測驗 |
+| Unit 02 | `bevel-and-refraction` | 物理厚度、倒角光線與 Vista 鏡面切面 | 表面折射 | ✅ 已定稿 | ✅ Vista Aero 光學元件組裝器（倒角、`inset` 陰影、50% 切面、文字光暈）+ 3 題測驗 |
+| Unit 03 | `gpu-compositing-and-agents` | GPU 合成圖層效能瓶頸與 AGENTS.md 規範 | 效能與規範 | ✅ 已定稿 | ✅ GPU 圖層效能與 FPS 壓力模擬器 + AGENTS.md 合規診斷 + 3 題測驗 |
 
 ---
 
 ## 三、待擴充單元 Backlog（下次從這裡開始）
 
-1. **Unit 04｜Prompt 工程與結構化輸出**（推薦優先擴充）
-   - 建議 Slug：`prompt-engineering`
-   - 建議分類：`AI 工作流`
-   - 預計互動實驗室：Few-shot 範例與 JSON Schema 結構化輸出比對模擬器（對比有／無約束的 LLM 輸出穩定度）。
-2. **Unit 05｜Multi-Agent 協作與任務分工**
-   - 建議 Slug：`multi-agent-crew`
-   - 建議分類：`Agent 架構`
-   - 預計互動實驗室：Coordinator 與 Subagent 任務派工與訊息流視覺化追蹤器。
-3. **Unit 06｜Function Calling 與 MCP 協定入門**
-   - 建議 Slug：`function-calling-mcp`
-   - 建議分類：`Agent 架構`
-   - 預計互動實驗室：Tool Schema 參數檢驗與模擬工具呼叫迴圈沙盒。
+1. **Unit 04｜SVG 置換濾鏡與邊緣色散折射**（推薦優先擴充）
+   - 建議 Slug：`svg-refraction-displacement`
+   - 建議分類：`表面折射`
+   - 預計互動實驗室：利用 `feDisplacementMap` 模擬玻璃邊緣折射彎曲與輕微色散光環。
+2. **Unit 05｜動態光源追蹤與滑鼠高光跟隨（Specular Pointer Tracking）**
+   - 建議 Slug：`dynamic-light-tracking`
+   - 建議分類：`光學基底`
+   - 預計互動實驗室：透過 CSS 自訂屬性 `--mx` / `--my` 驅動卡片倒角反光隨游標移動。
+3. **Unit 06｜無障礙降級策略：`prefers-reduced-transparency` 與舊瀏覽器退場**
+   - 建議 Slug：`accessibility-fallback`
+   - 建議分類：`效能與規範`
+   - 預計互動實驗室：即時切換高對比／減少透明度系統設定，檢視文字對比度（WCAG AA/AAA）。
 
 ---
 
 ## 四、接手協作提醒
 
-- 新增單元前，請務必先讀取 [AGENTS.md](./AGENTS.md) 第五節的「4 步標準工作流」。
-- 首頁 `index.html` 末尾的虛線待擴充卡片（`.card-soon`）目前指向 **Unit 04（`prompt-engineering`）**；當 Unit 04 完成時，記得將該卡片的預設指令更新為 Unit 05。
+- 新增單元前，請先讀 [AGENTS.md](./AGENTS.md) 確認五大 CSS 光學技巧與 GPU 合成效能預算（避免在主面板內層無限嵌套 `backdrop-filter`）。
+- 首頁 `index.html` 末尾的 `.card-soon` 目前指向 **Unit 04（`svg-refraction-displacement`）**。
