@@ -12,9 +12,10 @@
 - **預計閱讀時間**：`12 分鐘`
 - **關鍵字標籤**：`GPU Compositing`, `FPS Budget`, `AGENTS.md`
 - **成品路徑**：`lessons/gpu-compositing-and-agents/index.html`
+- **Ingest 原始文獻來源**：[`raw/05-chromium-gpu-compositing-and-fps-budget.md`](../raw/05-chromium-gpu-compositing-and-fps-budget.md)
 - **前後單元導覽**：
   - 上一單元：`../bevel-and-refraction/index.html`（Unit 02 物理厚度、倒角光線與 Vista 鏡面切面）
-  - 下一單元：`../../index.html`（返回知識庫總覽首頁）
+  - 下一單元：`../svg-refraction-displacement/index.html`（Unit 04 SVG 置換濾鏡與邊緣色散折射）
 - **狀態**：`✅ 已定稿`
 
 ---

@@ -750,9 +750,10 @@
         </div>
       </a>
       <nav class="nav-links" aria-label="主導覽列">
-        <a class="nav-link" href="#lessons">光學講義單元</a>
-        <a class="nav-link" href="#architecture">標準 CSS 與 AGENTS.md</a>
-        <a class="nav-link nav-pill mono" href="#extend-spec">AGENTS.md v2.0</a>
+        <a class="nav-link" href="#lessons">光學講義單元 (6)</a>
+        <a class="nav-link" href="slides/index.html">🎓 教學 HTML 簡報 (Week 10)</a>
+        <a class="nav-link" href="#architecture">Graph/Loop 與 AGENTS.md</a>
+        <a class="nav-link nav-pill mono" href="wiki/index.md">Wiki 總索引</a>
       </nav>
     </div>
   </header>
@@ -762,38 +763,39 @@
     <section class="hero-wrap">
       <div class="glass-panel hero-panel">
         <div>
-          <div class="hero-eyebrow">💎 TAICA 生成式 AI 第九週實作專案・光學版</div>
-          <h1 class="vista-text">用 <code class="mono">AGENTS.md</code> 鎖定光學密碼，<br>打造可永續擴充的 Aero Glass 知識庫。</h1>
+          <div class="hero-eyebrow">💎 TAICA 生成式 AI 第 9～10 週實作成果・LLM Wiki × 教學簡報</div>
+          <h1 class="vista-text">從 <code class="mono">AGENTS.md</code> 到 <code class="mono">Graph + Loop</code>，<br>建構可驗證的 Aero Glass 知識庫與簡報。</h1>
           <p class="hero-desc">
-            結合 Windows Vista Aero 的「50% 鏡面反光切面、1px 倒角高光與文字光暈」，以及 Apple 介面的「模糊彩度補償與微觀 SVG 雜訊」。每一頁都先寫定 <code class="mono">notes/*.md</code> 原稿，再生成嚴格遵守 GPU 合成效能預算的單檔互動講義。
+            結合 Windows Vista Aero 的「50% 鏡面反光切面、1px 倒角高光與文字光暈」，以及 Apple Liquid Glass 的「彩度補償、動態追光與 SVG 磨砂折射」。收錄 <code class="mono">raw/</code> 6 篇權威文獻、<code class="mono">notes/</code> 與 <code class="mono">lessons/</code> 6 單元互動實驗室，並透過 Graph + Loop 產出 12 頁教學 HTML 簡報。
           </p>
           <div class="hero-actions">
-            <a class="aero-btn aero-btn-primary" href="#lessons">探索 3 個光學講義 ↓</a>
-            <a class="aero-btn aero-btn-secondary" href="lessons/bevel-and-refraction/index.html">體驗 Vista 光學組裝器 →</a>
+            <a class="aero-btn aero-btn-primary" href="slides/index.html">🎓 瀏覽第 10 週教學 HTML 簡報 →</a>
+            <a class="aero-btn aero-btn-secondary" href="#lessons">探索 6 個光學講義 ↓</a>
+            <a class="aero-btn aero-btn-secondary" href="wiki/index.md">📚 Wiki 總索引</a>
           </div>
         </div>
 
         <aside class="hero-stats-box" aria-label="知識庫狀態儀表板">
           <div class="stats-head">
-            <span class="mono">OPTICAL SPEC STATUS</span>
-            <span class="status-badge">● 已套用 5 大技巧</span>
+            <span class="mono">WIKI &amp; GRAPH STATUS</span>
+            <span class="status-badge">● 6/6 單元 100% 覆蓋</span>
           </div>
           <div class="stats-grid">
             <div class="stat-cell">
-              <div class="stat-num">03</div>
-              <div class="stat-lbl">已定稿光學單元</div>
+              <div class="stat-num">06</div>
+              <div class="stat-lbl">Ingest 原始文獻與單元</div>
             </div>
             <div class="stat-cell">
-              <div class="stat-num">03</div>
-              <div class="stat-lbl">即時 CSS 互動實驗台</div>
+              <div class="stat-num">12</div>
+              <div class="stat-lbl">教學 HTML 簡報頁數</div>
             </div>
             <div class="stat-cell">
               <div class="stat-num">190%</div>
               <div class="stat-lbl">標準 Saturate 補償</div>
             </div>
             <div class="stat-cell">
-              <div class="stat-num">3.2%</div>
-              <div class="stat-lbl">SVG 磨砂雜訊濃度</div>
+              <div class="stat-num">100%</div>
+              <div class="stat-lbl">Graph 腳本通過率</div>
             </div>
           </div>
         </aside>
@@ -809,10 +811,10 @@
 
       <div class="glass-panel toolbar">
         <div class="filter-group" role="group" aria-label="光學分類篩選">
-          <button type="button" class="filter-btn active" data-filter="all">全部 (3)</button>
-          <button type="button" class="filter-btn" data-filter="光學基底">光學基底 (1)</button>
-          <button type="button" class="filter-btn" data-filter="表面折射">表面折射 (1)</button>
-          <button type="button" class="filter-btn" data-filter="效能與規範">效能與規範 (1)</button>
+          <button type="button" class="filter-btn active" data-filter="all">全部 (6)</button>
+          <button type="button" class="filter-btn" data-filter="光學基底">光學基底 (2)</button>
+          <button type="button" class="filter-btn" data-filter="表面折射">表面折射 (2)</button>
+          <button type="button" class="filter-btn" data-filter="效能與規範">效能與規範 (2)</button>
         </div>
         <div class="search-box">
           <span class="search-icon">🔍</span>
@@ -878,21 +880,81 @@
           </div>
         </article>
 
-        <!-- Unit 04 Backlog Card -->
-        <article class="card-soon" id="soonCard">
+        <!-- Unit 04 -->
+        <article class="glass-panel lesson-card" data-category="表面折射" data-search="unit 04 svg refraction displacement fedisplacementmap chromatic dispersion 置換 濾鏡 色散 折射">
           <div class="card-top">
-            <span class="unit-pill" style="background:linear-gradient(180deg, #f59e0b 0%, #d97706 100%);">UNIT 04・BACKLOG</span>
+            <span class="unit-pill">UNIT 04</span>
             <span class="cat-pill">表面折射</span>
           </div>
           <h3 class="vista-text">SVG 置換濾鏡與邊緣色散折射</h3>
-          <p>已排入 <code class="mono">NOTES.md</code> 待擴充清單（slug：<code class="mono">svg-refraction-displacement</code>）。一鍵複製指令給 AI，即可依 <code class="mono">AGENTS.md</code> 自動長出第 4 頁！</p>
+          <p>突破 <code class="mono">blur()</code> 原地模糊極限，運用 <code class="mono">&lt;feDisplacementMap&gt;</code> 像素位移公式與雙色稜鏡色散打造液態折光。</p>
           <div class="tags">
             <span class="tag">feDisplacementMap</span>
-            <span class="tag">Chromatic Dispersion</span>
-            <span class="tag">待 AI 擴充</span>
+            <span class="tag">Chromatic Edge</span>
+            <span class="tag">raw/03</span>
+          </div>
+          <div class="card-foot">
+            <span class="read-time">⏱ 12 分鐘・含 SVG 置換台</span>
+            <a class="go-link" href="lessons/svg-refraction-displacement/index.html">進入實驗 →</a>
+          </div>
+        </article>
+
+        <!-- Unit 05 -->
+        <article class="glass-panel lesson-card" data-category="光學基底" data-search="unit 05 dynamic light tracking specular pointer --mx --my mask-composite liquid glass 動態 光源 追蹤">
+          <div class="card-top">
+            <span class="unit-pill">UNIT 05</span>
+            <span class="cat-pill">光學基底</span>
+          </div>
+          <h3 class="vista-text">動態光源追蹤與滑鼠高光跟隨</h3>
+          <p>透過 <code class="mono">--mx</code> / <code class="mono">--my</code> CSS 變數與 <code class="mono">mask-composite: exclude</code> 外框遮罩，打造零 Reflow 的 Liquid Glass 游標即時反光。</p>
+          <div class="tags">
+            <span class="tag">--mx / --my</span>
+            <span class="tag">Border Mask</span>
+            <span class="tag">raw/04</span>
+          </div>
+          <div class="card-foot">
+            <span class="read-time">⏱ 11 分鐘・含追光舞台</span>
+            <a class="go-link" href="lessons/dynamic-light-tracking/index.html">進入實驗 →</a>
+          </div>
+        </article>
+
+        <!-- Unit 06 -->
+        <article class="glass-panel lesson-card" data-category="效能與規範" data-search="unit 06 wcag 4.5:1 contrast accessibility fallback prefers-reduced-transparency @supports 無障礙 降級 對比">
+          <div class="card-top">
+            <span class="unit-pill">UNIT 06</span>
+            <span class="cat-pill">效能與規範</span>
+          </div>
+          <h3 class="vista-text">WCAG 對比度驗證與無障礙降級策略</h3>
+          <p>實測 <code class="mono">4.5:1</code> AA 對比度紅線，並實作 <code class="mono">prefers-reduced-transparency</code> 與 <code class="mono">@supports not</code> 雙重無障礙退場防線。</p>
+          <div class="tags">
+            <span class="tag">WCAG 4.5:1</span>
+            <span class="tag">Reduced Transparency</span>
+            <span class="tag">raw/06</span>
+          </div>
+          <div class="card-foot">
+            <span class="read-time">⏱ 11 分鐘・含對比實測</span>
+            <a class="go-link" href="lessons/accessibility-fallback/index.html">進入實驗 →</a>
+          </div>
+        </article>
+
+        <!-- Unit 07 Backlog Card -->
+        <article class="card-soon" id="soonCard">
+          <div class="card-top">
+            <span class="unit-pill" style="background:linear-gradient(180deg, #10b981 0%, #047857 100%);">WEEK 10・成果亮點</span>
+            <span class="cat-pill">教學 HTML 簡報</span>
+          </div>
+          <h3 class="vista-text">12 頁教學簡報 × Graph + Loop 實戰報告</h3>
+          <p>已完成 6 篇權威 <code class="mono">raw/</code> 文獻 Ingest（Unit 01～06 100% 覆蓋），並透過 <code class="mono">.agents/workflows/topic-slides.md</code> 與 <code class="mono">check_slides.py</code> 產出可瀏覽簡報！</p>
+          <div class="tags">
+            <span class="tag">12 Slides</span>
+            <span class="tag">Graph + Loop</span>
+            <span class="tag">Exit Code 0</span>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+            <a class="go-link" style="flex:1; text-align:center;" href="slides/index.html">🎓 開啟教學簡報 →</a>
           </div>
           <button type="button" class="copy-btn" data-copy-target="extendPromptText">
-            📋 一鍵複製 Unit 04 擴充指令
+            📋 複製 Graph Workflow 執行指令
           </button>
         </article>
 
@@ -908,30 +970,30 @@
     <section class="sec" id="architecture">
       <div class="glass-panel arch-panel">
         <div class="sec-head">
-          <h2 class="sec-title vista-text">📐 AGENTS.md 規範對照與標準 <code class="mono">.glass-panel</code> 程式碼</h2>
-          <p class="sec-sub" style="text-shadow:none;">這座網站的每一塊毛玻璃都不是 AI 臨場亂湊的，而是嚴格執行根目錄 <code class="mono">AGENTS.md</code> 與 <code class="mono">CLAUDE.md</code> 的標準規格。</p>
+          <h2 class="sec-title vista-text">📐 Graph + Loop 工作流、AGENTS.md 規範與標準 <code class="mono">.glass-panel</code> 程式碼</h2>
+          <p class="sec-sub" style="text-shadow:none;">從第 9 週的「單一憲法規範」進化為第 10 週的「<code class="mono">raw/</code> 先討論後 Ingest → Graph 節點隔離 → <code class="mono">check_slides.py</code> 程式驗收」完整工程化流程。</p>
         </div>
 
         <div class="workflow-grid">
           <div class="step-box">
-            <span class="step-num">STEP 1</span>
-            <h4>讀憲法與現況白板</h4>
-            <p>AI 先讀取 <code class="mono">AGENTS.md</code>、<code class="mono">NOTES.md</code> 與 <code class="mono">log.md</code>，鎖定五大光學 CSS 與 GPU 預算。</p>
+            <span class="step-num">NODE 1 + GATE A</span>
+            <h4>討論定案與檢索覆蓋關卡</h4>
+            <p>先以 8 題訪談記錄於 <code class="mono">raw/00</code>，Ingest 6 篇文獻並由 <code class="mono">sources.md</code> 確認 6 單元 100% 覆蓋。</p>
           </div>
           <div class="step-box">
-            <span class="step-num">STEP 2</span>
-            <h4>內容先行寫定原稿</h4>
-            <p>複製 <code class="mono">notes/_template.md</code> 建立 <code class="mono">notes/&lt;slug&gt;.md</code>，先確立光學原理與 3 題測驗。</p>
+            <span class="step-num">NODE 2 &amp; 3</span>
+            <h4>平行證據卡與大綱確認</h4>
+            <p>將 6 單元拆為互不混淆的 <code class="mono">card-01..06.md</code>，確立 12 頁新手教學 <code class="mono">outline.md</code> 後才動筆。</p>
           </div>
           <div class="step-box">
-            <span class="step-num">STEP 3</span>
-            <h4>生成五段式光學網頁</h4>
-            <p>套用標準 <code class="mono">.glass-panel</code>、<code class="mono">::before</code> 50% 切面與 <code class="mono">.vista-text</code> 產出獨立單檔 HTML。</p>
+            <span class="step-num">NODE 4 &amp; 5 (LOOP)</span>
+            <h4>逐頁稿與單檔簡報渲染</h4>
+            <p>撰寫 <code class="mono">drafts/slides-draft.md</code> 與 <code class="mono">slides/index.html</code>；出錯時只退回該頁微調、不動其他已完成頁面。</p>
           </div>
           <div class="step-box">
-            <span class="step-num">STEP 4</span>
-            <h4>串接首頁與紀錄交接</h4>
-            <p>加入首頁卡片、更新前後頁相對路徑，並寫回 <code class="mono">NOTES.md</code> 與 <code class="mono">log.md</code>。</p>
+            <span class="step-num">GATE D + REPORT</span>
+            <h4>Python 腳本自動化驗收</h4>
+            <p>執行 <code class="mono">workflow/check_slides.py</code> 驗證頁數、字數不溢出、出處存在與 GPU 預算，輸出 <code class="mono">report.md</code>。</p>
           </div>
         </div>
 
@@ -1025,10 +1087,10 @@
     0 0 16px rgba(255, 255, 255, 0.5);
 }</pre>
             <div class="code-head" style="margin-bottom:6px;">
-              <span>⚡ Unit 04 一鍵擴充 Prompt</span>
+              <span>⚡ /topic-slides 工作流啟動 Prompt</span>
               <button type="button" class="filter-btn" style="padding:3px 9px; font-size:11.5px;" data-copy-target="extendPromptText">複製 Prompt</button>
             </div>
-            <div class="prompt-box" id="extendPromptText">請先閱讀專案根目錄的 AGENTS.md、NOTES.md 與 log.md。我想新增 Unit 04，主題為「SVG 置換濾鏡與邊緣色散折射」（slug：svg-refraction-displacement，分類：表面折射）。請嚴格依照 AGENTS.md 的 4 步標準工作流：先依 notes/_template.md 建立 notes/svg-refraction-displacement.md，再生成套用 .glass-panel 規範的五段式互動講義 lessons/svg-refraction-displacement/index.html（含原生 JS 互動實驗室與 3 題測驗），接著更新 index.html 首頁卡片與上一單元的導覽連結，最後更新 NOTES.md 與 log.md。</div>
+            <div class="prompt-box" id="extendPromptText">請讀取 AGENTS.md、wiki/index.md 與 .agents/workflows/topic-slides.md，依序檢查 raw/ 來源覆蓋率、生成證據卡 workflow/cards/、驗證大綱 outline.md，更新 slides/index.html 並執行 python workflow/check_slides.py 確認全部關卡通過（Exit Code 0）與寫入 workflow/report.md。</div>
           </div>
         </div>
       </div>
@@ -1036,8 +1098,8 @@
   </main>
 
   <footer class="wrap glass-panel">
-    <span class="vista-text">Aero Glass &amp; Optical UI Wiki｜以 <code class="mono">AGENTS.md</code> 鎖定光學規範與效能預算</span>
-    <span>TAICA 生成式 AI 第九週實作專案</span>
+    <span class="vista-text">Aero Glass &amp; Optical UI Wiki｜以 <code class="mono">AGENTS.md</code> ＋ <code class="mono">Graph/Loop</code> 鎖定光學規範與資料真實性</span>
+    <span>TAICA 生成式 AI 第 9～10 週實作專案</span>
   </footer>
 
   <script>

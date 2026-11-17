@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit 04｜SVG 置換濾鏡與邊緣色散折射 — Aero Glass Wiki</title>
+  <meta name="description" content="深入解析 SVG feTurbulence 與 feDisplacementMap 光學折射原理，並透過輕量雙色色散光緣營造液態玻璃邊緣折射。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink-dark: #1c1c1e;
+      --ink-body: #1e293b;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans TC', 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-dark);
+      min-height: 100vh;
+      line-height: 1.75;
+      background-color: #67c4eb;
+      overflow-x: hidden;
+    }
+
+    .aurora-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.85) 0%, transparent 45%),
+        radial-gradient(circle at 86% 14%, rgba(79, 70, 229, 0.78) 0%, transparent 46%),
+        radial-gradient(circle at 78% 78%, rgba(14, 165, 233, 0.9) 0%, transparent 48%),
+        radial-gradient(circle at 22% 84%, rgba(245, 158, 11, 0.55) 0%, transparent 44%),
+        linear-gradient(135deg, #bae6fd 0%, #38bdf8 40%, #0d9488 78%, #1e3a8a 100%);
+    }
+
+    .aurora-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+    .glass-panel {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0.14) 100%);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-top-color: rgba(255, 255, 255, 0.7);
+      border-left-color: rgba(255, 255, 255, 0.5);
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .glass-panel::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glass-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.032;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glass-panel > * { position: relative; z-index: 1; }
+
+    .vista-text {
+      color: #1c1c1e;
+      font-weight: 700;
+      text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.9),
+        0 0 16px rgba(255, 255, 255, 0.5);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.3) 100%);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .topbar-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .topbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      text-decoration: none; color: var(--ink-dark);
+      background: rgba(255, 255, 255, 0.68);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 10px; padding: 6px 12px;
+      font-size: 13.5px; font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .back-btn:hover { background: rgba(255, 255, 255, 0.92); }
+    .breadcrumb { font-size: 13px; font-weight: 700; color: var(--ink-body); }
+
+    .jump-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .jump-links a {
+      text-decoration: none; font-size: 13px; font-weight: 700;
+      color: var(--ink-dark); padding: 5px 11px; border-radius: 8px;
+    }
+    .jump-links a:hover { background: rgba(255, 255, 255, 0.58); }
+
+    .lesson-hero { padding: 34px 0 22px; }
+    .hero-box { padding: 28px; }
+    .meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .unit-pill {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 12px;
+      padding: 4px 12px; border-radius: 999px;
+      background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%);
+      color: #FFFFFF; border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+    .meta-tag {
+      font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 8px;
+      background: rgba(255, 255, 255, 0.62); border: 1px solid rgba(255, 255, 255, 0.85);
+    }
+    .lesson-hero h1 {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+      font-weight: 900; font-size: clamp(26px, 4vw, 38px); line-height: 1.25; margin-bottom: 10px;
+    }
+    .lesson-sub { font-size: 16px; color: var(--ink-body); font-weight: 500; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.7); }
+
+    .tldr-box {
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      border-radius: 12px; padding: 18px 20px;
+    }
+    .tldr-label {
+      display: inline-block; font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800; font-size: 11.5px; background: #0369a1;
+      color: #FFFFFF; padding: 3px 9px; border-radius: 6px; margin-bottom: 8px;
+    }
+
+    .sec { padding: 20px 0 28px; }
+    .sec-title { font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif; font-weight: 900; font-size: 24px; margin-bottom: 16px; }
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .concept-card { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+    .concept-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: #0369a1;
+      background: rgba(255, 255, 255, 0.65); border: 1px solid rgba(255, 255, 255, 0.85);
+      align-self: flex-start; padding: 3px 9px; border-radius: 6px;
+    }
+    .concept-card h3 { font-size: 18px; font-weight: 800; }
+    .concept-card ul { padding-left: 18px; font-size: 14px; color: var(--ink-body); display: flex; flex-direction: column; gap: 7px; }
+    .mini-code {
+      background: rgba(15, 23, 42, 0.86); color: #e2e8f0; border-radius: 10px;
+      padding: 11px 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px;
+      line-height: 1.5; overflow-x: auto; white-space: pre; margin-top: auto;
+    }
+
+    .pitfall-box { padding: 20px 24px; border-left: 6px solid var(--accent-rose); }
+    .pitfall-box h3 { font-size: 17px; font-weight: 800; color: #9f1239; margin-bottom: 6px; }
+    .pitfall-box p { font-size: 14.5px; color: var(--ink-dark); font-weight: 500; }
+
+    /* Section 4: Interactive Refraction Lab */
+    .lab-card { padding: 26px; }
+    .lab-head {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;
+      padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.5); margin-bottom: 20px;
+    }
+    .lab-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+      background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%);
+      color: #FFFFFF; padding: 3px 10px; border-radius: 6px; display: inline-block; margin-bottom: 8px;
+    }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .seg-btn {
+      padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(30, 41, 59, 0.25);
+      background: rgba(255, 255, 255, 0.72); font-family: 'Noto Sans TC', sans-serif;
+      font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--ink-dark);
+    }
+    .seg-btn.active { background: #0284c7; color: #FFFFFF; border-color: #0369a1; }
+
+    .lab-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 22px; align-items: start; }
+    .controls-pane, .preview-pane {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .ctrl-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; margin-bottom: 6px; }
+    input[type="range"] { width: 100%; accent-color: #0284c7; cursor: pointer; }
+
+    .refract-stage {
+      position: relative;
+      height: 290px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      background: #0b192c;
+    }
+
+    .refract-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .chromatic-lens-overlay {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 72%;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.24) 0%, rgba(255, 255, 255, 0.06) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      border-top-color: rgba(255, 255, 255, 0.85);
+      border-left-color: rgba(255, 255, 255, 0.65);
+      pointer-events: none;
+      transition: box-shadow 0.15s ease;
+    }
+
+    .lens-badge {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.78);
+      color: #0c4a6e;
+      padding: 2px 8px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .live-css-out {
+      background: rgba(15, 23, 42, 0.88);
+      color: #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.8px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    /* Section 5: Quiz & Pager */
+    .quiz-list { display: flex; flex-direction: column; gap: 16px; }
+    .quiz-card { padding: 22px; }
+    .quiz-q { font-size: 16px; font-weight: 800; margin-bottom: 12px; }
+    .quiz-options { display: grid; gap: 8px; }
+    .quiz-opt {
+      text-align: left; padding: 10px 14px; border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.85); background: rgba(255, 255, 255, 0.62);
+      font-family: 'Noto Sans TC', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink-dark); cursor: pointer;
+    }
+    .quiz-opt:hover { background: rgba(255, 255, 255, 0.88); }
+    .quiz-opt.is-correct { background: rgba(16, 185, 129, 0.26); border-color: #059669; color: #064e3b; }
+    .quiz-opt.is-wrong { background: rgba(244, 63, 94, 0.24); border-color: #e11d48; color: #881337; }
+    .quiz-explain {
+      display: none; margin-top: 12px; padding: 11px 14px; border-radius: 10px;
+      background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(255, 255, 255, 0.9); font-size: 13.5px;
+    }
+    .quiz-explain.show { display: block; }
+    .quiz-score-bar {
+      margin-top: 16px; padding: 14px 18px; display: flex; justify-content: space-between;
+      flex-wrap: wrap; gap: 10px; font-weight: 800;
+    }
+
+    .pager { margin: 26px 0 44px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .pager-link { text-decoration: none; color: var(--ink-dark); padding: 12px 18px; font-weight: 800; font-size: 14px; border-radius: 14px; }
+    .pager-link:hover { transform: translateY(-2px); }
+
+    @media (max-width: 860px) {
+      .lab-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="aurora-backdrop" aria-hidden="true"></div>
+  <div class="aurora-grid" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <a class="back-btn" href="../../index.html">← 返回知識庫首頁</a>
+        <span class="breadcrumb">首頁 / 表面折射 / Unit 04</span>
+      </div>
+      <nav class="jump-links" aria-label="章節快速導覽">
+        <a href="#concepts">核心觀念</a>
+        <a href="#lab">置換折射實驗台</a>
+        <a href="#quiz">隨堂檢測</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="lesson-hero">
+      <div class="glass-panel hero-box">
+        <div class="meta-row">
+          <span class="unit-pill">UNIT 04</span>
+          <span class="meta-tag">📂 分類：表面折射</span>
+          <span class="meta-tag">⏱ 預計閱讀：12 分鐘</span>
+          <span class="meta-tag mono">notes/svg-refraction-displacement.md</span>
+          <span class="meta-tag mono">raw/03-svg-turbulence...</span>
+        </div>
+        <h1 class="vista-text">SVG 置換濾鏡與邊緣色散折射</h1>
+        <p class="lesson-sub">突破 <code class="mono">blur()</code> 的平面極限——運用 <code class="mono">&lt;feDisplacementMap&gt;</code> 像素偏移與雙色邊緣色散，重現水滴與液態玻璃的彎曲折光。</p>
+
+        <div class="tldr-box">
+          <span class="tldr-label">TL;DR 一句話核心觀念</span>
+          <p>CSS <code class="mono">backdrop-filter: blur()</code> 只會就地混色模糊，無法彎折背景線條；透過 SVG <strong><code class="mono">&lt;feDisplacementMap&gt;</code></strong> 讀取 R/G 通道偏移量將背景像素推離原本位置，再替玻璃倒角疊加極細微「青藍＋暖紅」<strong>邊緣色散光環</strong>，即可刻畫出凹凸曲面的液態折射感。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="concepts">
+      <h2 class="sec-title vista-text">🧩 核心觀念拆解</h2>
+
+      <div class="concept-grid">
+        <article class="glass-panel concept-card">
+          <span class="concept-num">TECHNIQUE 01</span>
+          <h3 class="vista-text">為什麼 <code class="mono">blur()</code> 不等於物理折射？</h3>
+          <ul>
+            <li><strong>原地模糊 vs 座標位移</strong>：高斯模糊把相鄰像素平均化，背後的斜線不會轉彎；實體透鏡則依表面曲率將像素推離原本座標。</li>
+            <li><strong>SVG 置換公式</strong>：讀取 <code class="mono">xChannelSelector="R"</code> 與 <code class="mono">yChannelSelector="G"</code> 貼圖值（以中性灰 <code class="mono">0.5</code> 為基準），依 <code class="mono">scale</code> 計算偏移。</li>
+          </ul>
+          <pre class="mini-code">P'(x,y) = P(
+  x + scale * (R(x,y) - 0.5),
+  y + scale * (G(x,y) - 0.5)
+)</pre>
+        </article>
+
+        <article class="glass-panel concept-card">
+          <span class="concept-num">TECHNIQUE 02</span>
+          <h3 class="vista-text">低頻曲面濾鏡與參數對照</h3>
+          <ul>
+            <li><strong>頻率必須拉低</strong>：與 Unit 01 消弭色帶的微觀雜訊（<code class="mono">baseFrequency: 0.85</code>）不同，曲面折光要使用低頻 <strong><code class="mono">0.015 ～ 0.045</code></strong>。</li>
+            <li><strong>強度建議區間</strong>：UI 卡片微折射建議 <code class="mono">scale: 8 ～ 28</code>；液態透鏡舞台展示可調至 <code class="mono">40 ～ 60</code>。</li>
+          </ul>
+          <pre class="mini-code">&lt;feTurbulence type="fractalNoise"
+  baseFrequency="0.025" numOctaves="2" /&gt;
+&lt;feDisplacementMap scale="24"
+  xChannelSelector="R"
+  yChannelSelector="G" /&gt;</pre>
+        </article>
+
+        <article class="glass-panel concept-card">
+          <span class="concept-num">TECHNIQUE 03</span>
+          <h3 class="vista-text">稜鏡邊緣色散與跨瀏覽器實戰</h3>
+          <ul>
+            <li><strong>牛頓三稜鏡效應</strong>：藍光與紅光波長折射率不同，厚玻璃斜邊會閃出微弱的青藍光與洋紅光錯位邊緣。</li>
+            <li><strong>零額外 GPU 負擔技法</strong>：利用 <code class="mono">inset 2px 0 rgba(56,189,248,0.48)</code> 搭配 <code class="mono">inset -2px 0 rgba(244,63,94,0.3)</code> 模擬色散邊，Chrome / Safari / Firefox 100% 通用。</li>
+          </ul>
+          <pre class="mini-code">box-shadow:
+  inset 2px 0 3px rgba(56,189,248,0.48),
+  inset -2px 0 3px rgba(244,63,94,0.30),
+  inset 0 1px 0 rgba(255,255,255,0.85);</pre>
+        </article>
+      </div>
+
+      <div class="glass-panel pitfall-box">
+        <h3>⚠️ 常見誤區與效能地雷：別把大範圍文字區也拿來強烈置換！</h3>
+        <p>部分開發者誤將 <code class="mono">scale="80"</code> 的 SVG 置換直接套在閱讀文章本體上，結果導致文字筆畫斷裂、跨瀏覽器相容度不一且吃光行動裝置 GPU。<strong>正確工程做法</strong>：內文容器維持標準 <code class="mono">blur(20px) saturate(190%)</code>＋雙色 <code class="mono">inset</code> 色散光緣，只將真正的 <code class="mono">&lt;feDisplacementMap&gt;</code> 套用在背景光學圖騰或局部透鏡層。</p>
+      </div>
+    </section>
+
+    <section class="sec" id="lab">
+      <div class="glass-panel lab-card">
+        <div class="lab-head">
+          <div>
+            <span class="lab-badge">INTERACTIVE LAB ・ SVG DISPLACEMENT</span>
+            <h2 class="sec-title vista-text" style="margin-bottom:4px;">SVG 置換濾鏡與邊緣色散折射實驗台</h2>
+            <p style="font-size:14px; color:var(--ink-body);">拖曳下方參數，直接修改真實 SVG DOM 的 <code class="mono">&lt;feTurbulence&gt;</code> 與 <code class="mono">&lt;feDisplacementMap&gt;</code> 濾鏡屬性！</p>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="seg-btn active" data-preset="ui">💧 推薦 UI 微折射 (scale 20)</button>
+            <button type="button" class="seg-btn" data-preset="wave">🌊 強水波曲率 (scale 48)</button>
+            <button type="button" class="seg-btn" data-preset="off">📏 歸零對照 (scale 0)</button>
+          </div>
+        </div>
+
+        <div class="lab-grid">
+          <div class="controls-pane">
+            <div>
+              <div class="ctrl-label"><span>置換強度 <code class="mono">scale</code></span><span class="mono" id="valScale">24</span></div>
+              <input type="range" id="rangeScale" min="0" max="60" value="24">
+            </div>
+
+            <div>
+              <div class="ctrl-label"><span>波紋頻率 <code class="mono">baseFrequency</code></span><span class="mono" id="valFreq">0.025</span></div>
+              <input type="range" id="rangeFreq" min="0.010" max="0.075" step="0.003" value="0.025">
+            </div>
+
+            <div>
+              <div class="ctrl-label"><span>邊緣色散偏移（Chromatic Edge）</span><span class="mono" id="valChrom">2.5px</span></div>
+              <input type="range" id="rangeChrom" min="0" max="6" step="0.5" value="2.5">
+            </div>
+
+            <div>
+              <div class="ctrl-label"><span>即時生成 SVG + CSS 規格</span></div>
+              <pre class="live-css-out" id="liveSvgOut"></pre>
+            </div>
+          </div>
+
+          <div class="preview-pane">
+            <div class="refract-stage">
+              <svg class="refract-svg" viewBox="0 0 600 320" preserveAspectRatio="xMidYMid slice" aria-label="SVG 置換濾鏡即時預覽">
+                <defs>
+                  <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#0284c7" />
+                    <stop offset="48%" stop-color="#0d9488" />
+                    <stop offset="100%" stop-color="#4338ca" />
+                  </linearGradient>
+                  <filter id="liveDisplaceFilter" x="-20%" y="-20%" width="140%" height="140%">
+                    <feTurbulence id="svgTurb" type="fractalNoise" baseFrequency="0.025" numOctaves="2" seed="7" result="waveMap" />
+                    <feDisplacementMap id="svgDisp" in="SourceGraphic" in2="waveMap" scale="24" xChannelSelector="R" yChannelSelector="G" />
+                  </filter>
+                </defs>
+
+                <rect width="600" height="320" fill="url(#bgGrad)" />
+                <g filter="url(#liveDisplaceFilter)">
+                  <g stroke="rgba(255,255,255,0.42)" stroke-width="2">
+                    <line x1="0" y1="50" x2="600" y2="50" />
+                    <line x1="0" y1="110" x2="600" y2="110" />
+                    <line x1="0" y1="170" x2="600" y2="170" />
+                    <line x1="0" y1="230" x2="600" y2="230" />
+                    <line x1="0" y1="290" x2="600" y2="290" />
+                    <line x1="80" y1="0" x2="80" y2="320" />
+                    <line x1="180" y1="0" x2="180" y2="320" />
+                    <line x1="280" y1="0" x2="280" y2="320" />
+                    <line x1="380" y1="0" x2="380" y2="320" />
+                    <line x1="480" y1="0" x2="480" y2="320" />
+                  </g>
+                  <circle cx="150" cy="155" r="72" fill="#fbbf24" opacity="0.9" />
+                  <circle cx="445" cy="140" r="82" fill="#38bdf8" opacity="0.88" />
+                  <circle cx="310" cy="235" r="64" fill="#fb7185" opacity="0.86" />
+                  <text x="300" y="172" text-anchor="middle" fill="#ffffff" font-size="38" font-weight="900" font-family="Plus Jakarta Sans, sans-serif" letter-spacing="4">REFRACTION</text>
+                </g>
+              </svg>
+
+              <div class="chromatic-lens-overlay" id="chromaticOverlay">
+                <span class="lens-badge">DISPERSION LENS PREVIEW</span>
+                <h4 class="vista-text" style="font-size:17px; margin-bottom:4px;">稜鏡邊緣色散 ＋ SVG 置換彎曲</h4>
+                <p style="font-size:12.5px; font-weight:600; color:#0f172a;">觀察背後網格線條與「REFRACTION」字樣如何隨 <code class="mono">scale</code> 扭轉，以及鏡框左右兩側的青藍／暖紅光緣。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="quiz">
+      <h2 class="sec-title vista-text">📝 隨堂自我檢測（3 題）</h2>
+      <div class="quiz-list">
+        <div class="glass-panel quiz-card" data-answer="A">
+          <div class="quiz-q">Q1. 為何想呈現「玻璃將後方線條彎曲推開」的效果，不能只靠 CSS <code class="mono">blur()</code>，而需要 SVG <code class="mono">&lt;feDisplacementMap&gt;</code>？</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-opt" data-opt="A">A. 因為 blur() 只能做原地像素加權平均模糊，無法根據置換貼圖改變後方像素的 X/Y 幾何座標</button>
+            <button type="button" class="quiz-opt" data-opt="B">B. 因為 blur() 無法支援 PNG 圖片背景</button>
+            <button type="button" class="quiz-opt" data-opt="C">C. 因為 &lt;feDisplacementMap&gt; 會自動關閉 GPU 加速</button>
+            <button type="button" class="quiz-opt" data-opt="D">D. 因為 CSS 不支援百分比單位</button>
+          </div>
+          <div class="quiz-explain"><strong>✅ 解析（正解：A）</strong>：高斯模糊只做鄰域色彩平均，線條中心仍在原處；置換濾鏡則依 R/G 色版計算 $P'(x,y)$ 座標位移，模擬真實光線偏折。</div>
+        </div>
+
+        <div class="glass-panel quiz-card" data-answer="B">
+          <div class="quiz-q">Q2. 若分別要製作「消弭色帶微粒」與「大片水波曲面折射」，<code class="mono">baseFrequency</code> 應該如何區分？</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-opt" data-opt="A">A. 兩者都必須設定成 0</button>
+            <button type="button" class="quiz-opt" data-opt="B">B. 消弭色帶用高頻 0.85 配合 2%～4% 低透明度；大片曲面折射用低頻 0.015～0.045</button>
+            <button type="button" class="quiz-opt" data-opt="C">C. 曲面折射要用 5.0，微觀雜訊要用 0.001</button>
+            <button type="button" class="quiz-opt" data-opt="D">D. baseFrequency 不會影響濾鏡波形大小</button>
+          </div>
+          <div class="quiz-explain"><strong>✅ 解析（正解：B）</strong>：頻率越高顆粒越細（`0.85` 呈現磨砂霧粒），頻率越低波長越寬（`0.015～0.045` 呈現滑順玻璃曲率）。</div>
+        </div>
+
+        <div class="glass-panel quiz-card" data-answer="B">
+          <div class="quiz-q">Q3. 實作真實玻璃的「邊緣色散光環（Chromatic Dispersion）」時，在顧及文字可讀性與效能下，最推薦的實作策略為何？</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-opt" data-opt="A">A. 對整頁所有文字都套用大幅度 SVG RGB 位移濾鏡直到文字變成彩色疊影</button>
+            <button type="button" class="quiz-opt" data-opt="B">B. 在玻璃邊緣疊加微幅（1px～3px）的青藍與暖紅雙色 inset 內陰影光緣，主文字區保持清晰銳利</button>
+            <button type="button" class="quiz-opt" data-opt="C">C. 把所有 HTML 按鈕截圖後進 Photoshop 塗上漸層</button>
+            <button type="button" class="quiz-opt" data-opt="D">D. 關閉 -webkit-backdrop-filter</button>
+          </div>
+          <div class="quiz-explain"><strong>✅ 解析（正解：B）</strong>：邊緣色散集中在高曲率切角邊緣；利用雙色 <code class="mono">inset</code> 內陰影可零濾鏡開銷呈現色散美感並確保內文絕對清晰。</div>
+        </div>
+      </div>
+
+      <div class="glass-panel quiz-score-bar">
+        <span>目前答題進度：<span id="quizProgress">0 / 3 題</span></span>
+        <span>答對題數：<span id="quizCorrect">0 題</span></span>
+      </div>
+    </section>
+
+    <nav class="pager" aria-label="單元切換導覽">
+      <a class="glass-panel pager-link" href="../gpu-compositing-and-agents/index.html">← 上一單元：Unit 03 GPU 合成圖層與 AGENTS.md</a>
+      <a class="glass-panel pager-link" href="../dynamic-light-tracking/index.html">下一單元：Unit 05 動態光源追蹤與滑鼠高光 →</a>
+    </nav>
+  </main>
+
+  <script>
+    (function () {
+      const rangeScale = document.getElementById('rangeScale');
+      const rangeFreq = document.getElementById('rangeFreq');
+      const rangeChrom = document.getElementById('rangeChrom');
+      const valScale = document.getElementById('valScale');
+      const valFreq = document.getElementById('valFreq');
+      const valChrom = document.getElementById('valChrom');
+      const svgTurb = document.getElementById('svgTurb');
+      const svgDisp = document.getElementById('svgDisp');
+      const chromaticOverlay = document.getElementById('chromaticOverlay');
+      const liveSvgOut = document.getElementById('liveSvgOut');
+      const presetBtns = document.querySelectorAll('[data-preset]');
+
+      function renderLab() {
+        const scale = Number(rangeScale.value);
+        const freq = Number(rangeFreq.value).toFixed(3);
+        const chrom = Number(rangeChrom.value).toFixed(1);
+
+        valScale.textContent = scale;
+        valFreq.textContent = freq;
+        valChrom.textContent = chrom + 'px';
+
+        svgTurb.setAttribute('baseFrequency', freq);
+        svgDisp.setAttribute('scale', scale);
+
+        const cPx = Number(chrom);
+        chromaticOverlay.style.boxShadow =
+          '0 18px 34px rgba(0,0,0,0.28), ' +
+          'inset ' + cPx + 'px 0 ' + (cPx * 1.4).toFixed(1) + 'px rgba(56, 189, 248, 0.65), ' +
+          'inset -' + cPx + 'px 0 ' + (cPx * 1.4).toFixed(1) + 'px rgba(244, 63, 94, 0.48), ' +
+          'inset 0 1px 0 rgba(255,255,255,0.85)';
+
+        liveSvgOut.textContent =
+          '<feTurbulence type="fractalNoise" baseFrequency="' + freq + '" numOctaves="2" />\n' +
+          '<feDisplacementMap scale="' + scale + '" xChannelSelector="R" yChannelSelector="G" />\n\n' +
+          '.chromatic-edge {\n' +
+          '  box-shadow:\n' +
+          '    inset ' + cPx + 'px 0 ' + (cPx * 1.4).toFixed(1) + 'px rgba(56, 189, 248, 0.65),\n' +
+          '    inset -' + cPx + 'px 0 ' + (cPx * 1.4).toFixed(1) + 'px rgba(244, 63, 94, 0.48);\n' +
+          '}';
+      }
+
+      [rangeScale, rangeFreq, rangeChrom].forEach((el) => el.addEventListener('input', renderLab));
+
+      presetBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          presetBtns.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const mode = btn.getAttribute('data-preset');
+          if (mode === 'ui') {
+            rangeScale.value = 20; rangeFreq.value = 0.022; rangeChrom.value = 2.0;
+          } else if (mode === 'wave') {
+            rangeScale.value = 48; rangeFreq.value = 0.043; rangeChrom.value = 4.5;
+          } else {
+            rangeScale.value = 0; rangeFreq.value = 0.025; rangeChrom.value = 0;
+          }
+          renderLab();
+        });
+      });
+
+      renderLab();
+
+      const quizCards = document.querySelectorAll('.quiz-card');
+      const quizProgress = document.getElementById('quizProgress');
+      const quizCorrect = document.getElementById('quizCorrect');
+      const answeredState = {};
+
+      quizCards.forEach((card, qIdx) => {
+        const correctOpt = card.getAttribute('data-answer');
+        const opts = card.querySelectorAll('.quiz-opt');
+        const explain = card.querySelector('.quiz-explain');
+
+        opts.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const chosen = btn.getAttribute('data-opt');
+            opts.forEach((o) => {
+              o.classList.remove('is-correct', 'is-wrong');
+              if (o.getAttribute('data-opt') === correctOpt) o.classList.add('is-correct');
+            });
+            if (chosen !== correctOpt) btn.classList.add('is-wrong');
+            answeredState[qIdx] = chosen === correctOpt;
+            explain.classList.add('show');
+            quizProgress.textContent = Object.keys(answeredState).length + ' / ' + quizCards.length + ' 題';
+            quizCorrect.textContent = Object.values(answeredState).filter(Boolean).length + ' 題';
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

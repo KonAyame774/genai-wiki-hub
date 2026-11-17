@@ -4,6 +4,21 @@
 
 ---
 
+## [2026-11-17] v3.0 — 完成第 10 週「6 篇 Ingest LLM Wiki ＋ Graph/Loop 教學 HTML 簡報」全面升級
+
+- **變更決策**：
+  - 依第 10 週課程「先討論、後生成」規範完成 8 題需求訪談定案並寫入 `raw/00-interview-and-requirements.md`。
+  - 建立原始文獻層 `raw/01` ～ `raw/06` 共 6 篇權威規格文獻，完成對 Unit 01～03 的來源回補，並將 Backlog 中的 Unit 04（`svg-refraction-displacement`）、Unit 05（`dynamic-light-tracking`）、Unit 06（`accessibility-fallback`）全數生成 `notes/*.md` 原稿與五段式互動講義 `lessons/*/index.html`，建立 `wiki/index.md` 總索引。
+  - 依課程 Slide 43–47 建立檔案化 Graph + Loop 工作流（`.agents/workflows/topic-slides.md`、`workflow/sources.md`、`workflow/cards/card-01..06.md`、`workflow/outline.md`、`workflow/drafts/slides-draft.md`），產出 12 頁新手向教學 HTML 簡報 `slides/index.html`（每頁附 Wiki 出處與互動實驗室連結）。
+  - 開發可執行檢查腳本 `workflow/check_slides.py`；執行過程中第 1 輪偵測到解析器未跳過 HTML 空標籤（`<br>`）、第 2 輪真實攔截 S04/S05/S07/S12 字數溢出（> 420 字），僅局部精簡該 4 頁後於第 3 輪達成 `Exit Code 0` 全過並留存於 `workflow/report.md` 與 `WEEK10_SUBMISSION.md`。
+- **影響檔案**：
+  - 新增 `raw/*`（7 檔）、`wiki/index.md`、`notes/svg-refraction-displacement.md`、`notes/dynamic-light-tracking.md`、`notes/accessibility-fallback.md`
+  - 新增 `lessons/svg-refraction-displacement/index.html`、`lessons/dynamic-light-tracking/index.html`、`lessons/accessibility-fallback/index.html`
+  - 新增 `slides/index.html`、`.agents/workflows/topic-slides.md`、`workflow/*`、`WEEK10_SUBMISSION.md`
+  - 更新 `index.html`、`AGENTS.md`、`CLAUDE.md`、`README.md`、`NOTES.md`、`notes/blur-and-saturation.md`、`notes/bevel-and-refraction.md`、`notes/gpu-compositing-and-agents.md`、`lessons/gpu-compositing-and-agents/index.html`
+
+---
+
 ## [2026-11-17] v2.1 — 升級 Unit 03 互動實驗室為真實 GPU 渲染與即時 FPS 壓測
 
 - **變更內容**：

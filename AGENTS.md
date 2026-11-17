@@ -130,26 +130,29 @@
 
 ```text
 genai-wiki-hub/                         ← GitHub Repository 根目錄（GitHub Pages 部署根目錄）
-├── index.html                          ← 光學知識庫首頁（分類篩選、搜尋、3 單元卡片與完整程式碼展示）
+├── index.html                          ← 光學知識庫首頁（6 單元卡片、分類搜尋、Graph/Loop 與規範區）
 ├── AGENTS.md                           ← 本文件（AI 與人類共讀的核心開發憲法）
 ├── CLAUDE.md                           ← 與 AGENTS.md 完全同步的指引檔
-├── README.md                           ← GitHub Repository 說明文件
+├── README.md                           ← 專案說明文件
 ├── NOTES.md                            ← 現況白板：目前進度、待擴充 Backlog、交接備忘
 ├── log.md                              ← 決策與變更紀錄：只增不刪的架構演進歷史
-├── .nojekyll                           ← 停用 Jekyll，確保純靜態部署
-├── .gitignore                          ← 忽略暫存檔
-├── notes/                              ← 【內容先行層 / 光學設計原稿】
-│   ├── _template.md                    ← 新增單元時必用的 Markdown 標準範本
-│   ├── blur-and-saturation.md          ← Unit 01 原稿：背景模糊、鮮豔度補償與 SVG 磨砂雜訊
-│   ├── bevel-and-refraction.md         ← Unit 02 原稿：物理厚度、倒角光線與 Vista 鏡面切面
-│   └── gpu-compositing-and-agents.md   ← Unit 03 原稿：GPU 合成效能瓶頸與 AGENTS.md 規範
-└── lessons/                            ← 【網頁成品層】每個單元一個獨立資料夾
-    ├── blur-and-saturation/
-    │   └── index.html                  ← Unit 01 互動講義頁
-    ├── bevel-and-refraction/
-    │   └── index.html                  ← Unit 02 互動講義頁
-    └── gpu-compositing-and-agents/
-        └── index.html                  ← Unit 03 互動講義頁
+├── WEEK10_SUBMISSION.md                ← 第 10 週作業繳交完整報告與反思紀錄
+├── raw/                                ← 【原始文獻層】6 篇權威技術規格＋00 需求訪談定案
+├── wiki/
+│   └── index.md                        ← 【知識總索引】raw → notes → lessons → slides 對照圖譜
+├── notes/                              ← 【內容先行層 / 6 單元知識原稿】
+│   ├── _template.md
+│   ├── blur-and-saturation.md          ← Unit 01 原稿
+│   ├── bevel-and-refraction.md         ← Unit 02 原稿
+│   ├── gpu-compositing-and-agents.md   ← Unit 03 原稿
+│   ├── svg-refraction-displacement.md  ← Unit 04 原稿
+│   ├── dynamic-light-tracking.md       ← Unit 05 原稿
+│   └── accessibility-fallback.md       ← Unit 06 原稿
+├── lessons/                            ← 【互動講義成品層】Unit 01～06 獨立單檔實驗室
+├── slides/
+│   └── index.html                      ← 【第 10 週教學 HTML 簡報】12 頁互動簡報（含出處列）
+├── .agents/workflows/topic-slides.md   ← Graph + Loop 自動生成簡報工作流規格
+└── workflow/                           ← Graph 狀態產出物（sources / cards / outline / drafts / check_slides.py / report）
 ```
 
 ### 2. 命名與相對路徑鐵則

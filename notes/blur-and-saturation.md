@@ -12,6 +12,7 @@
 - **預計閱讀時間**：`10 分鐘`
 - **關鍵字標籤**：`backdrop-filter`, `saturate(190%)`, `SVG Noise`
 - **成品路徑**：`lessons/blur-and-saturation/index.html`
+- **Ingest 原始文獻來源**：[`raw/01-w3c-css-backdrop-filter-spec.md`](../raw/01-w3c-css-backdrop-filter-spec.md)、[`raw/03-svg-turbulence-and-displacement-refraction.md`](../raw/03-svg-turbulence-and-displacement-refraction.md)
 - **前後單元導覽**：
   - 上一單元：`../../index.html`（返回首頁）
   - 下一單元：`../bevel-and-refraction/index.html`（Unit 02 物理厚度、倒角光線與 Vista 鏡面切面）

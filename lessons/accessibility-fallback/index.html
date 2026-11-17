@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unit 06｜WCAG 對比度驗證與無障礙降級策略 — Aero Glass Wiki</title>
+  <meta name="description" content="兼顧極致通透與全民可讀性——實測 WCAG 2.2 4.5:1 對比度基準，並用 prefers-reduced-transparency 與 @supports 打造雙重無障礙退場防線。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+TC:wght@400;500;700;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink-dark: #1c1c1e;
+      --ink-body: #1e293b;
+      --accent-rose: #f43f5e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans TC', 'Plus Jakarta Sans', sans-serif;
+      color: var(--ink-dark);
+      min-height: 100vh;
+      line-height: 1.75;
+      background-color: #67c4eb;
+      overflow-x: hidden;
+    }
+
+    .aurora-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(16, 185, 129, 0.85) 0%, transparent 45%),
+        radial-gradient(circle at 86% 14%, rgba(79, 70, 229, 0.78) 0%, transparent 46%),
+        radial-gradient(circle at 78% 78%, rgba(14, 165, 233, 0.9) 0%, transparent 48%),
+        radial-gradient(circle at 22% 84%, rgba(245, 158, 11, 0.55) 0%, transparent 44%),
+        linear-gradient(135deg, #bae6fd 0%, #38bdf8 40%, #0d9488 78%, #1e3a8a 100%);
+    }
+
+    .aurora-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.14) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.14) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 20px; }
+
+    .glass-panel {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0.14) 100%);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-top-color: rgba(255, 255, 255, 0.7);
+      border-left-color: rgba(255, 255, 255, 0.5);
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.8),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .glass-panel::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glass-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.032;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glass-panel > * { position: relative; z-index: 1; }
+
+    @media (prefers-reduced-transparency: reduce) {
+      .glass-panel {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: rgba(248, 250, 252, 0.94);
+      }
+      .glass-panel::before { opacity: 0.18; }
+    }
+
+    @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+      .glass-panel {
+        background: rgba(248, 250, 252, 0.90);
+      }
+    }
+
+    .vista-text {
+      color: #1c1c1e;
+      font-weight: 700;
+      text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.9),
+        0 0 16px rgba(255, 255, 255, 0.5);
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.58) 0%, rgba(255, 255, 255, 0.3) 100%);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+    }
+
+    .topbar-inner {
+      max-width: 1080px; margin: 0 auto; padding: 12px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 6px; text-decoration: none; color: var(--ink-dark);
+      background: rgba(255, 255, 255, 0.68); border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 10px; padding: 6px 12px; font-size: 13.5px; font-weight: 800;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    }
+    .back-btn:hover { background: rgba(255, 255, 255, 0.92); }
+    .breadcrumb { font-size: 13px; font-weight: 700; color: var(--ink-body); }
+    .jump-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .jump-links a {
+      text-decoration: none; font-size: 13px; font-weight: 700; color: var(--ink-dark); padding: 5px 11px; border-radius: 8px;
+    }
+    .jump-links a:hover { background: rgba(255, 255, 255, 0.58); }
+
+    .lesson-hero { padding: 34px 0 22px; }
+    .hero-box { padding: 28px; }
+    .meta-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .unit-pill {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 12px; padding: 4px 12px;
+      border-radius: 999px; background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%);
+      color: #FFFFFF; border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+    .meta-tag {
+      font-size: 12.5px; font-weight: 700; padding: 4px 10px; border-radius: 8px;
+      background: rgba(255, 255, 255, 0.62); border: 1px solid rgba(255, 255, 255, 0.85);
+    }
+    .lesson-hero h1 {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
+      font-weight: 900; font-size: clamp(26px, 4vw, 38px); line-height: 1.25; margin-bottom: 10px;
+    }
+    .lesson-sub { font-size: 16px; color: var(--ink-body); font-weight: 500; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255, 255, 255, 0.7); }
+
+    .tldr-box {
+      background: rgba(255, 255, 255, 0.58); border: 1px solid rgba(255, 255, 255, 0.85);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95); border-radius: 12px; padding: 18px 20px;
+    }
+    .tldr-label {
+      display: inline-block; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 11.5px;
+      background: #0369a1; color: #FFFFFF; padding: 3px 9px; border-radius: 6px; margin-bottom: 8px;
+    }
+
+    .sec { padding: 20px 0 28px; }
+    .sec-title { font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif; font-weight: 900; font-size: 24px; margin-bottom: 16px; }
+    .concept-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
+    .concept-card { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+    .concept-num {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700; color: #0369a1;
+      background: rgba(255, 255, 255, 0.65); border: 1px solid rgba(255, 255, 255, 0.85);
+      align-self: flex-start; padding: 3px 9px; border-radius: 6px;
+    }
+    .concept-card h3 { font-size: 18px; font-weight: 800; }
+    .concept-card ul { padding-left: 18px; font-size: 14px; color: var(--ink-body); display: flex; flex-direction: column; gap: 7px; }
+    .mini-code {
+      background: rgba(15, 23, 42, 0.86); color: #e2e8f0; border-radius: 10px; padding: 11px 12px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.5;
+      overflow-x: auto; white-space: pre; margin-top: auto;
+    }
+
+    .pitfall-box { padding: 20px 24px; border-left: 6px solid var(--accent-rose); }
+    .pitfall-box h3 { font-size: 17px; font-weight: 800; color: #9f1239; margin-bottom: 6px; }
+    .pitfall-box p { font-size: 14.5px; color: var(--ink-dark); font-weight: 500; }
+
+    /* Interactive WCAG & Fallback Lab */
+    .lab-card { padding: 26px; }
+    .lab-head {
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;
+      padding-bottom: 16px; border-bottom: 1px solid rgba(255, 255, 255, 0.5); margin-bottom: 20px;
+    }
+    .lab-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 11.5px; font-weight: 700;
+      background: linear-gradient(180deg, #0ea5e9 0%, #0369a1 100%);
+      color: #FFFFFF; padding: 3px 10px; border-radius: 6px; display: inline-block; margin-bottom: 8px;
+    }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .seg-btn {
+      padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(30, 41, 59, 0.25);
+      background: rgba(255, 255, 255, 0.72); font-family: 'Noto Sans TC', sans-serif;
+      font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--ink-dark);
+    }
+    .seg-btn.active { background: #0284c7; color: #FFFFFF; border-color: #0369a1; }
+
+    .lab-grid { display: grid; grid-template-columns: 0.92fr 1.08fr; gap: 22px; align-items: start; }
+    .controls-pane, .preview-pane {
+      background: rgba(255, 255, 255, 0.6); border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px;
+    }
+    .ctrl-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; margin-bottom: 6px; }
+    input[type="range"] { width: 100%; accent-color: #0284c7; cursor: pointer; }
+    .check-row {
+      display: flex; align-items: center; gap: 10px; background: rgba(255, 255, 255, 0.56);
+      border: 1px solid rgba(255, 255, 255, 0.85); border-radius: 10px; padding: 9px 12px; cursor: pointer; font-size: 13.5px; font-weight: 700;
+    }
+    .check-row input { width: 17px; height: 17px; accent-color: #0284c7; }
+
+    .wcag-stage {
+      position: relative;
+      border-radius: 14px;
+      padding: 26px 20px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      transition: background 0.2s ease;
+    }
+
+    .bg-noise-words {
+      position: absolute;
+      inset: 8px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 900;
+      font-size: 32px;
+      line-height: 1.2;
+      color: rgba(255, 255, 255, 0.35);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .wcag-demo-card {
+      position: relative;
+      z-index: 1;
+      border-radius: 14px;
+      padding: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.22);
+      transition: all 0.2s ease;
+    }
+
+    .contrast-scoreboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+
+    .score-pill {
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+    }
+    .score-pill b { display: block; font-size: 19px; font-family: 'Plus Jakarta Sans', sans-serif; }
+    .score-pill span { font-size: 11.5px; font-weight: 700; color: var(--ink-body); }
+
+    .live-css-out {
+      background: rgba(15, 23, 42, 0.88); color: #e2e8f0; border-radius: 10px; padding: 12px 14px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11.8px; line-height: 1.5; white-space: pre-wrap;
+    }
+
+    .quiz-list { display: flex; flex-direction: column; gap: 16px; }
+    .quiz-card { padding: 22px; }
+    .quiz-q { font-size: 16px; font-weight: 800; margin-bottom: 12px; }
+    .quiz-options { display: grid; gap: 8px; }
+    .quiz-opt {
+      text-align: left; padding: 10px 14px; border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.85); background: rgba(255, 255, 255, 0.62);
+      font-family: 'Noto Sans TC', sans-serif; font-size: 14px; font-weight: 600; color: var(--ink-dark); cursor: pointer;
+    }
+    .quiz-opt:hover { background: rgba(255, 255, 255, 0.88); }
+    .quiz-opt.is-correct { background: rgba(16, 185, 129, 0.26); border-color: #059669; color: #064e3b; }
+    .quiz-opt.is-wrong { background: rgba(244, 63, 94, 0.24); border-color: #e11d48; color: #881337; }
+    .quiz-explain {
+      display: none; margin-top: 12px; padding: 11px 14px; border-radius: 10px;
+      background: rgba(255, 255, 255, 0.72); border: 1px solid rgba(255, 255, 255, 0.9); font-size: 13.5px;
+    }
+    .quiz-explain.show { display: block; }
+    .quiz-score-bar { margin-top: 16px; padding: 14px 18px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; font-weight: 800; }
+
+    .pager { margin: 26px 0 44px; display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+    .pager-link { text-decoration: none; color: var(--ink-dark); padding: 12px 18px; font-weight: 800; font-size: 14px; border-radius: 14px; }
+    .pager-link:hover { transform: translateY(-2px); }
+
+    @media (max-width: 860px) {
+      .lab-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="aurora-backdrop" aria-hidden="true"></div>
+  <div class="aurora-grid" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-left">
+        <a class="back-btn" href="../../index.html">← 返回知識庫首頁</a>
+        <span class="breadcrumb">首頁 / 效能與規範 / Unit 06</span>
+      </div>
+      <nav class="jump-links" aria-label="章節快速導覽">
+        <a href="#concepts">核心觀念</a>
+        <a href="#lab">無障礙模擬器</a>
+        <a href="#quiz">隨堂檢測</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="lesson-hero">
+      <div class="glass-panel hero-box">
+        <div class="meta-row">
+          <span class="unit-pill">UNIT 06</span>
+          <span class="meta-tag">📂 分類：效能與規範</span>
+          <span class="meta-tag">⏱ 預計閱讀：11 分鐘</span>
+          <span class="meta-tag mono">notes/accessibility-fallback.md</span>
+          <span class="meta-tag mono">raw/06-wcag-contrast...</span>
+        </div>
+        <h1 class="vista-text">WCAG 對比度驗證與無障礙降級策略</h1>
+        <p class="lesson-sub">兼顧極致通透與全民可讀性——實測 WCAG 2.2 相對亮度對比，並用 <code class="mono">prefers-reduced-transparency</code> 與 <code class="mono">@supports</code> 打造安全退場防線。</p>
+
+        <div class="tldr-box">
+          <span class="tldr-label">TL;DR 一句話核心觀念</span>
+          <p>真正成熟的光學設計必須經得起極端閱讀環境考驗：將閱讀區底色墊高以穩守 <strong>WCAG 2.2 <code class="mono">4.5:1</code>（AA 級）</strong> 文字對比底線，並同時撰寫 <code class="mono">@media (prefers-reduced-transparency: reduce)</code> 與 <code class="mono">@supports not (backdrop-filter: blur(1px))</code> 雙重無障礙退場規則。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="concepts">
+      <h2 class="sec-title vista-text">🧩 核心觀念拆解</h2>
+
+      <div class="concept-grid">
+        <article class="glass-panel concept-card">
+          <span class="concept-num">TECHNIQUE 01</span>
+          <h3 class="vista-text">WCAG 2.2 對比度紅線（AA / AAA）</h3>
+          <ul>
+            <li><strong>三大關鍵數字</strong>：一般內文最低 <strong><code class="mono">4.5 : 1</code></strong>（AA 級）、大標題（<code class="mono">&gt;= 18pt</code>）最低 <strong><code class="mono">3.0 : 1</code></strong>、高齡與醫療 AAA 級目標 <strong><code class="mono">7.0 : 1</code></strong>。</li>
+            <li><strong>實務墊底建議</strong>：外層做玻璃透視，內層文字卡建議設在 <code class="mono">rgba(255,255,255,0.58～0.75)</code>。</li>
+          </ul>
+          <pre class="mini-code">Contrast = (L1 + 0.05) / (L2 + 0.05)
+/* 一般文字須 >= 4.5 : 1 */</pre>
+        </article>
+
+        <article class="glass-panel concept-card">
+          <span class="concept-num">TECHNIQUE 02</span>
+          <h3 class="vista-text">系統「減少透明度」媒體查詢</h3>
+          <ul>
+            <li><strong>尊重系統輔助偏好</strong>：當使用者在 Windows 11 或 macOS 開啟「減少透明度」時，自動撤銷即時模糊。</li>
+            <li><strong>高不透明度退場</strong>：改用 <code class="mono">rgba(248, 250, 252, 0.94)</code> 潔淨霧面實底，對比度瞬間拉升至 <code class="mono">10:1</code> 以上。</li>
+          </ul>
+          <pre class="mini-code">@media (prefers-reduced-transparency: reduce) {
+  .glass-panel {
+    backdrop-filter: none;
+    background: rgba(248, 250, 252, 0.94);
+  }
+}</pre>
+        </article>
+
+        <article class="glass-panel concept-card">
+          <span class="concept-num">TECHNIQUE 03</span>
+          <h3 class="vista-text">不支援模糊環境的 <code class="mono">@supports</code> 保底</h3>
+          <ul>
+            <li><strong>防禦性退場（Progressive Enhancement）</strong>：防止舊版瀏覽器或低階模式在沒有模糊效果時讓背景雜線直接透穿文字。</li>
+            <li><strong>一鍵保底寫法</strong>：利用 <code class="mono">@supports not</code> 將底層白霧安全抬高至 <code class="mono">0.90</code>。</li>
+          </ul>
+          <pre class="mini-code">@supports not ((backdrop-filter: blur(1px))
+  or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    background: rgba(248, 250, 252, 0.90);
+  }
+}</pre>
+        </article>
+      </div>
+
+      <div class="glass-panel pitfall-box">
+        <h3>⚠️ 常見誤區與無障礙地雷：別把「白光外框 <code class="mono">text-shadow</code>」當作唯一救命稻草！</h3>
+        <p><code class="mono">.vista-text</code> 雖然能在深色圖塊上提升主觀視覺邊界，但 WCAG 自動化稽核只計算文字色（<code class="mono">#1c1c1e</code>）與半透明合成後背景的平均相對亮度。如果卡片底色只有 <code class="mono">0.12</code> 且剛好蓋在深藍背景上，對比度依舊會不及格！務必靠實底白霧濃度站穩 <code class="mono">4.5:1</code>。</p>
+      </div>
+    </section>
+
+    <section class="sec" id="lab">
+      <div class="glass-panel lab-card">
+        <div class="lab-head">
+          <div>
+            <span class="lab-badge">INTERACTIVE LAB ・ WCAG &amp; REDUCED TRANSPARENCY</span>
+            <h2 class="sec-title vista-text" style="margin-bottom:4px;">WCAG 2.2 對比度檢測與無障礙降級模擬器</h2>
+            <p style="font-size:14px; color:var(--ink-body);">切換系統無障礙環境或調整白底遮罩透明度，即時以數學公式計算對比度與 AA/AAA 通關燈號。</p>
+          </div>
+          <div class="btn-row">
+            <button type="button" class="seg-btn active" data-mode="standard">💎 標準 Aero Glass</button>
+            <button type="button" class="seg-btn" data-mode="reduced">♿ 開啟減少透明度</button>
+            <button type="button" class="seg-btn" data-mode="nosupport">⚠️ 模擬無模糊（無 fallback vs 有）</button>
+          </div>
+        </div>
+
+        <div class="lab-grid">
+          <div class="controls-pane">
+            <div>
+              <div class="ctrl-label"><span>面板白霧濃度（White Alpha）</span><span class="mono" id="valAlpha">0.62</span></div>
+              <input type="range" id="rangeAlpha" min="0.10" max="0.96" step="0.02" value="0.62">
+            </div>
+
+            <div>
+              <div class="ctrl-label"><span>測試底層極光區段</span></div>
+              <div class="btn-row">
+                <button type="button" class="seg-btn" data-bg="light">淺青天色 #7dd3fc</button>
+                <button type="button" class="seg-btn" data-bg="mid">極光深藍 #0369a1</button>
+                <button type="button" class="seg-btn active" data-bg="dark">深海夜空 #0b192c</button>
+              </div>
+            </div>
+
+            <label class="check-row">
+              <input type="checkbox" id="chkHalo" checked>
+              <span>套用 <code class="mono">.vista-text</code> 雙層白色光暈保護</span>
+            </label>
+
+            <pre class="live-css-out" id="liveA11yCss"></pre>
+          </div>
+
+          <div class="preview-pane">
+            <div class="wcag-stage" id="wcagStage">
+              <div class="bg-noise-words">CONTRAST BACKGROUND LAYER TEST 12345</div>
+              <div class="wcag-demo-card" id="wcagCard">
+                <h4 id="demoTitle" style="font-size:19px; margin-bottom:6px; color:#1c1c1e;">無障礙可讀性實測預覽框</h4>
+                <p style="font-size:14px; font-weight:500; color:#1c1c1e;">一般內文範例：在深海極光背景上方，玻璃卡片需保有足夠白霧濃度或觸發 <code class="mono">prefers-reduced-transparency</code> 退場機制。</p>
+              </div>
+            </div>
+
+            <div class="contrast-scoreboard">
+              <div class="score-pill">
+                <b id="ratioText">6.18 : 1</b>
+                <span>WCAG 相對對比度</span>
+              </div>
+              <div class="score-pill">
+                <b id="aaBadge">✅ 通過</b>
+                <span>AA 一般文字 (4.5:1)</span>
+              </div>
+              <div class="score-pill">
+                <b id="aaaBadge">❌ 未達</b>
+                <span>AAA 進階 (7.0:1)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec" id="quiz">
+      <h2 class="sec-title vista-text">📝 隨堂自我檢測（3 題）</h2>
+      <div class="quiz-list">
+        <div class="glass-panel quiz-card" data-answer="B">
+          <div class="quiz-q">Q1. 依據 W3C WCAG 2.2 規範，毛玻璃卡片內的「一般大小內文」至少需達到多少對比度才符合 AA 基本無障礙標準？</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-opt" data-opt="A">A. 1.5 : 1</button>
+            <button type="button" class="quiz-opt" data-opt="B">B. 4.5 : 1</button>
+            <button type="button" class="quiz-opt" data-opt="C">C. 12.0 : 1</button>
+            <button type="button" class="quiz-opt" data-opt="D">D. 只要是半透明就沒有對比度限制</button>
+          </div>
+          <div class="quiz-explain"><strong>✅ 解析（正解：B）</strong>：一般文字 WCAG AA 底線為 <code class="mono">4.5:1</code>，大標題為 <code class="mono">3.0:1</code>，最高級 AAA 則為 <code class="mono">7.0:1</code>。</div>
+        </div>
+
+        <div class="glass-panel quiz-card" data-answer="A">
+          <div class="quiz-q">Q2. 當使用者在 Windows 或 macOS 系統開啟「減少透明度」輔助功能時，CSS 應透過哪一個標準媒體查詢接手退場？</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-opt" data-opt="A">A. @media (prefers-reduced-transparency: reduce)</button>
+            <button type="button" class="quiz-opt" data-opt="B">B. @media (prefers-glass-opacity: zero)</button>
+            <button type="button" class="quiz-opt" data-opt="C">C. @media (min-blur: 100px)</button>
+            <button type="button" class="quiz-opt" data-opt="D">D. @import url("solid.css")</button>
+          </div>
+          <div class="quiz-explain"><strong>✅ 解析（正解：A）</strong>：<code class="mono">prefers-reduced-transparency: reduce</code> 是標準系統減透明度偏好查詢語法。</div>
+        </div>
+
+        <div class="glass-panel quiz-card" data-answer="A">
+          <div class="quiz-q">Q3. 為何不能只靠極低不透明度的 <code class="mono">rgba(255,255,255,0.12)</code> 搭配 <code class="mono">.vista-text</code>，就跳過 <code class="mono">@supports not</code> 退場設定？</div>
+          <div class="quiz-options">
+            <button type="button" class="quiz-opt" data-opt="A">A. 若舊環境不支援 backdrop-filter，只剩 12% 白透視的玻璃會讓銳利雜訊直接穿透背景並嚴重破壞文字辨識</button>
+            <button type="button" class="quiz-opt" data-opt="B">B. 因為 @supports 會自動加上 50% 高光切線</button>
+            <button type="button" class="quiz-opt" data-opt="C">C. 因為 rgba() 不支援小數</button>
+            <button type="button" class="quiz-opt" data-opt="D">D. 否則所有文字會變成白色</button>
+          </div>
+          <div class="quiz-explain"><strong>✅ 解析（正解：A）</strong>：當濾鏡失效時必須依賴 <code class="mono">0.90</code> 左右的高不透明度實底撐住對比與遮罩力。</div>
+        </div>
+      </div>
+
+      <div class="glass-panel quiz-score-bar">
+        <span>目前答題進度：<span id="quizProgress">0 / 3 題</span></span>
+        <span>答對題數：<span id="quizCorrect">0 題</span></span>
+      </div>
+    </section>
+
+    <nav class="pager" aria-label="單元切換導覽">
+      <a class="glass-panel pager-link" href="../dynamic-light-tracking/index.html">← 上一單元：Unit 05 動態光源追蹤與滑鼠高光</a>
+      <a class="glass-panel pager-link" href="../../slides/index.html">前往第 10 週教學 HTML 簡報 🎓 →</a>
+    </nav>
+  </main>
+
+  <script>
+    (function () {
+      const rangeAlpha = document.getElementById('rangeAlpha');
+      const valAlpha = document.getElementById('valAlpha');
+      const chkHalo = document.getElementById('chkHalo');
+      const modeBtns = document.querySelectorAll('[data-mode]');
+      const bgBtns = document.querySelectorAll('[data-bg]');
+      const wcagStage = document.getElementById('wcagStage');
+      const wcagCard = document.getElementById('wcagCard');
+      const demoTitle = document.getElementById('demoTitle');
+      const ratioText = document.getElementById('ratioText');
+      const aaBadge = document.getElementById('aaBadge');
+      const aaaBadge = document.getElementById('aaaBadge');
+      const liveA11yCss = document.getElementById('liveA11yCss');
+
+      let currentMode = 'standard';
+      let currentBg = { r: 11, g: 25, b: 44, css: '#0b192c' };
+
+      function srgbToLinear(c) {
+        const s = c / 255;
+        return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+      }
+
+      function luminance(r, g, b) {
+        return 0.2126 * srgbToLinear(r) + 0.7152 * srgbToLinear(g) + 0.0722 * srgbToLinear(b);
+      }
+
+      function renderA11y() {
+        let alpha = Number(rangeAlpha.value);
+        let useBlur = true;
+        if (currentMode === 'reduced') {
+          alpha = 0.94;
+          useBlur = false;
+        } else if (currentMode === 'nosupport') {
+          useBlur = false;
+        }
+        valAlpha.textContent = alpha.toFixed(2);
+
+        wcagStage.style.background = currentBg.css;
+        wcagCard.style.background = 'rgba(255, 255, 255, ' + alpha.toFixed(2) + ')';
+        wcagCard.style.backdropFilter = useBlur ? 'blur(20px) saturate(190%)' : 'none';
+        wcagCard.style.webkitBackdropFilter = useBlur ? 'blur(20px) saturate(190%)' : 'none';
+
+        demoTitle.style.textShadow = chkHalo.checked
+          ? '0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(255,255,255,0.5)'
+          : 'none';
+
+        const compR = Math.round(255 * alpha + currentBg.r * (1 - alpha));
+        const compG = Math.round(255 * alpha + currentBg.g * (1 - alpha));
+        const compB = Math.round(255 * alpha + currentBg.b * (1 - alpha));
+
+        const lBg = luminance(compR, compG, compB);
+        const lFg = luminance(28, 28, 30); // #1c1c1e
+        const ratio = (Math.max(lBg, lFg) + 0.05) / (Math.min(lBg, lFg) + 0.05);
+
+        ratioText.textContent = ratio.toFixed(2) + ' : 1';
+        aaBadge.textContent = ratio >= 4.5 ? '✅ 通過' : '❌ 未達標';
+        aaBadge.style.color = ratio >= 4.5 ? '#047857' : '#be123c';
+        aaaBadge.textContent = ratio >= 7.0 ? '✅ 通過' : '⚠️ 未達';
+        aaaBadge.style.color = ratio >= 7.0 ? '#047857' : '#b45309';
+
+        liveA11yCss.textContent =
+          '/* Mode: ' + currentMode + ' | Composite Contrast: ' + ratio.toFixed(2) + ':1 */\n' +
+          '.reading-surface {\n' +
+          '  background: rgba(255, 255, 255, ' + alpha.toFixed(2) + ');\n' +
+          '  backdrop-filter: ' + (useBlur ? 'blur(20px) saturate(190%)' : 'none') + ';\n' +
+          '}\n' +
+          '@media (prefers-reduced-transparency: reduce) {\n' +
+          '  .reading-surface { backdrop-filter: none; background: rgba(248, 250, 252, 0.94); }\n' +
+          '}';
+      }
+
+      modeBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          modeBtns.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentMode = btn.getAttribute('data-mode');
+          if (currentMode === 'reduced') rangeAlpha.value = 0.94;
+          else if (currentMode === 'nosupport') rangeAlpha.value = 0.22;
+          else rangeAlpha.value = 0.62;
+          renderA11y();
+        });
+      });
+
+      bgBtns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          bgBtns.forEach((b) => b.classList.remove('active'));
+          btn.classList.add('active');
+          const bg = btn.getAttribute('data-bg');
+          if (bg === 'light') currentBg = { r: 125, g: 211, b: 252, css: '#7dd3fc' };
+          else if (bg === 'mid') currentBg = { r: 3, g: 105, b: 161, css: '#0369a1' };
+          else currentBg = { r: 11, g: 25, b: 44, css: '#0b192c' };
+          renderA11y();
+        });
+      });
+
+      rangeAlpha.addEventListener('input', () => {
+        if (currentMode === 'reduced') {
+          currentMode = 'standard';
+          modeBtns.forEach((b) => b.classList.toggle('active', b.getAttribute('data-mode') === 'standard'));
+        }
+        renderA11y();
+      });
+      chkHalo.addEventListener('change', renderA11y);
+
+      renderA11y();
+
+      const quizCards = document.querySelectorAll('.quiz-card');
+      const quizProgress = document.getElementById('quizProgress');
+      const quizCorrect = document.getElementById('quizCorrect');
+      const answeredState = {};
+
+      quizCards.forEach((card, qIdx) => {
+        const correctOpt = card.getAttribute('data-answer');
+        const opts = card.querySelectorAll('.quiz-opt');
+        const explain = card.querySelector('.quiz-explain');
+
+        opts.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const chosen = btn.getAttribute('data-opt');
+            opts.forEach((o) => {
+              o.classList.remove('is-correct', 'is-wrong');
+              if (o.getAttribute('data-opt') === correctOpt) o.classList.add('is-correct');
+            });
+            if (chosen !== correctOpt) btn.classList.add('is-wrong');
+            answeredState[qIdx] = chosen === correctOpt;
+            explain.classList.add('show');
+            quizProgress.textContent = Object.keys(answeredState).length + ' / ' + quizCards.length + ' 題';
+            quizCorrect.textContent = Object.values(answeredState).filter(Boolean).length + ' 題';
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

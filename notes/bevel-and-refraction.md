@@ -12,6 +12,7 @@
 - **預計閱讀時間**：`12 分鐘`
 - **關鍵字標籤**：`Inset Bevel`, `::before Cut`, `.vista-text`
 - **成品路徑**：`lessons/bevel-and-refraction/index.html`
+- **Ingest 原始文獻來源**：[`raw/02-vista-dwm-aero-optical-spec.md`](../raw/02-vista-dwm-aero-optical-spec.md)
 - **前後單元導覽**：
   - 上一單元：`../blur-and-saturation/index.html`（Unit 01 背景模糊與鮮豔度補償）
   - 下一單元：`../gpu-compositing-and-agents/index.html`（Unit 03 GPU 合成圖層效能瓶頸與 AGENTS.md 規範）
