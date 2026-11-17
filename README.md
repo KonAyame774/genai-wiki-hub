@@ -1,5 +1,8 @@
 # GenAI Atelier & Study Wiki — GenAI 實戰講義與 LLM Wiki 知識庫
 
+- **🌐 線上網頁預覽（GitHub Pages）**：https://konayame774.github.io/genai-wiki-hub/
+- **📦 GitHub Repository**：https://github.com/KonAyame774/genai-wiki-hub
+
 這是一個結合 **「LLM Wiki 結構化筆記」** 與 **「Self-Contained 互動式學習網頁」** 的可擴充靜態知識庫專案，同時作為 **【TAICA 生成式 AI：文字與圖像生成的原理與實務】第九週作業（建立 `AGENTS.md` / `CLAUDE.md`）** 之實作成果。
 
 有別於一次性的 Vibe Coding（只求把單一頁面做出來），本專案的核心在於透過根目錄的 [`AGENTS.md`](./AGENTS.md)（與同步的 [`CLAUDE.md`](./CLAUDE.md)），建立一套讓 AI 協作代理能長期讀懂並持續擴充新單元的標準化生產線。
