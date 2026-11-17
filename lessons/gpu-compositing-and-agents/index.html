@@ -195,7 +195,7 @@
     .pitfall-box h3 { font-size: 17px; font-weight: 800; color: #9f1239; margin-bottom: 6px; }
     .pitfall-box p { font-size: 14.5px; color: var(--ink-dark); font-weight: 500; }
 
-    /* Section 4: GPU & AGENTS.md Lab */
+    /* Section 4: Real GPU Compositing & FPS Lab */
     .lab-card { padding: 26px; }
     .lab-head {
       display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; flex-wrap: wrap;
@@ -210,20 +210,135 @@
     .seg-btn {
       padding: 7px 12px; border-radius: 8px; border: 1px solid rgba(30, 41, 59, 0.25);
       background: rgba(255, 255, 255, 0.72); font-family: 'Noto Sans TC', sans-serif;
-      font-size: 12.5px; font-weight: 700; cursor: pointer;
+      font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--ink-dark);
     }
     .seg-btn.active { background: #0284c7; color: #FFFFFF; border-color: #0369a1; }
+    .seg-btn.danger-active { background: #e11d48; color: #FFFFFF; border-color: #9f1239; }
 
-    .lab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+    /* Live GPU Render Stage */
+    .gpu-stage-wrap {
+      margin-bottom: 20px;
+    }
+
+    .gpu-stage {
+      position: relative;
+      height: 290px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      background: linear-gradient(135deg, #091326 0%, #0f172a 100%);
+      box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .stage-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.1) 0px, rgba(255, 255, 255, 0.1) 6px, transparent 6px, transparent 22px);
+      pointer-events: none;
+    }
+
+    .stage-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    .stage-orb-1 {
+      width: 170px; height: 170px;
+      left: 10%; top: 15%;
+      background: radial-gradient(circle, #38bdf8 0%, #2563eb 70%);
+    }
+
+    .stage-orb-2 {
+      width: 190px; height: 190px;
+      left: 44%; top: 22%;
+      background: radial-gradient(circle, #34d399 0%, #0d9488 70%);
+    }
+
+    .stage-orb-3 {
+      width: 160px; height: 160px;
+      left: 68%; top: 18%;
+      background: radial-gradient(circle, #fb7185 0%, #f59e0b 75%);
+    }
+
+    .gpu-layers-host {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .real-glass-layer {
+      position: absolute;
+      border-radius: 12px;
+      padding: 9px 11px;
+      overflow: hidden;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.08) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      border-top-color: rgba(255, 255, 255, 0.72);
+      border-left-color: rgba(255, 255, 255, 0.55);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+      color: #ffffff;
+    }
+
+    .real-layer-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
+      margin-bottom: 6px;
+    }
+
+    .real-sub-row {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .real-sub-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: #0f172a;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .real-sub-pill.is-nested-blur {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.6);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    }
+
+    .stage-overlay-pill {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      z-index: 5;
+      background: rgba(15, 23, 42, 0.84);
+      color: #f8fafc;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+
+    .lab-grid { display: grid; grid-template-columns: 0.95fr 1.05fr; gap: 22px; align-items: start; }
 
     .controls-pane, .fps-pane {
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.62);
       border: 1px solid rgba(255, 255, 255, 0.85);
       border-radius: 14px;
       padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 13px;
     }
 
     .ctrl-label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 800; margin-bottom: 6px; }
@@ -238,33 +353,65 @@
     }
     .check-row input { width: 17px; height: 17px; margin-top: 2px; accent-color: #0284c7; flex-shrink: 0; }
 
-    .fps-header { display: flex; align-items: baseline; justify-content: space-between; }
-    .fps-num { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 38px; line-height: 1; }
-
-    .meter-track {
-      height: 14px; background: rgba(255, 255, 255, 0.8);
-      border: 1px solid rgba(30, 41, 59, 0.22); border-radius: 999px; overflow: hidden;
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
-    .meter-fill { height: 100%; transition: width 0.3s ease, background-color 0.3s ease; }
+
+    .tele-box {
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.92);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .tele-val {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 900;
+      font-size: 24px;
+      line-height: 1.1;
+      color: #0369a1;
+    }
+
+    .tele-lbl {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #334155;
+      margin-top: 3px;
+    }
+
+    .canvas-wrap {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .canvas-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 6px;
+    }
+
+    #fpsTimelineCanvas {
+      width: 100%;
+      height: 76px;
+      display: block;
+    }
 
     .verdict-pill {
-      padding: 10px 12px; border-radius: 10px; font-size: 13.5px; font-weight: 800;
+      padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 800;
       border: 1px solid rgba(255, 255, 255, 0.8);
     }
 
-    .layer-stack {
-      display: flex; flex-wrap: wrap; gap: 6px;
-      padding: 10px; border-radius: 10px; background: rgba(15, 23, 42, 0.84);
-    }
-    .gpu-chip {
-      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
-      padding: 3px 8px; border-radius: 6px;
-      background: rgba(56, 189, 248, 0.25); color: #bae6fd; border: 1px solid rgba(56, 189, 248, 0.6);
-    }
-    .gpu-chip.heavy { background: rgba(244, 63, 94, 0.35); color: #fecdd3; border-color: #fb7185; }
-
-    .audit-list { display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
-    .audit-item { padding: 8px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.68); }
+    .audit-list { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
+    .audit-item { padding: 7px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.7); }
+    .hardware-note { font-size: 12px; color: #334155; line-height: 1.5; }
 
     /* Section 5: Quiz & Pager */
     .quiz-list { display: flex; flex-direction: column; gap: 16px; }
@@ -313,7 +460,7 @@
       </div>
       <nav class="jump-links" aria-label="章節快速導覽">
         <a href="#concepts">核心觀念</a>
-        <a href="#lab">GPU 效能模擬</a>
+        <a href="#lab">真實 GPU 壓測</a>
         <a href="#quiz">隨堂檢測</a>
       </nav>
     </div>
@@ -387,66 +534,96 @@
       </div>
     </section>
 
-    <!-- Section 4: GPU Compositing & AGENTS.md Lab -->
+    <!-- Section 4: Real GPU Compositing & AGENTS.md Lab -->
     <section class="sec" id="lab">
-      <h2 class="sec-title vista-text">🧪 互動實驗室：GPU 合成圖層效能與 AGENTS.md 模擬器</h2>
+      <h2 class="sec-title vista-text">🧪 互動實驗室：GPU 合成圖層真實渲染與即時 FPS 壓測</h2>
       <div class="glass-panel lab-card">
         <div class="lab-head">
           <div>
-            <span class="lab-badge">PERFORMANCE LAB ・ 免 API KEY</span>
-            <h3 class="vista-text" style="font-size:20px;">壓力測試：調整模糊層數與規範開關，預測行動裝置 FPS</h3>
+            <span class="lab-badge">REAL GPU BENCHMARK ・ rAF + performance.now()</span>
+            <h3 class="vista-text" style="font-size:20px;">真實瀏覽器壓測：在畫面上掛載 1～80 個真毛玻璃層並實測幀率</h3>
+            <p style="font-size:13.5px; color:var(--ink-body); margin-top:4px;">下方舞台會<strong>真實生成 DOM 與 CSS <code class="mono">backdrop-filter</code></strong>，並以 <code class="mono">requestAnimationFrame</code> 位移背景光球強迫 GPU 每幀重算模糊。</p>
           </div>
           <div class="btn-row">
-            <button type="button" class="seg-btn" id="btnVibePreset">🚨 失控 Vibe Coding</button>
-            <button type="button" class="seg-btn active" id="btnSpecPreset">🏆 遵守 AGENTS.md 預算</button>
+            <button type="button" class="seg-btn" id="btnToggleRun">⏸ 暫停壓測</button>
+            <button type="button" class="seg-btn" id="btnVibePreset">🚨 失控 Vibe Coding (80層/60px)</button>
+            <button type="button" class="seg-btn active" id="btnSpecPreset">🏆 遵守 AGENTS.md 預算 (3層/20px)</button>
+          </div>
+        </div>
+
+        <!-- Live Real GPU Render Stage -->
+        <div class="gpu-stage-wrap">
+          <div class="gpu-stage" id="gpuRenderStage">
+            <div class="stage-grid-bg"></div>
+            <div class="stage-orb stage-orb-1" id="orb1"></div>
+            <div class="stage-orb stage-orb-2" id="orb2"></div>
+            <div class="stage-orb stage-orb-3" id="orb3"></div>
+            <div class="gpu-layers-host" id="gpuLayerHost"></div>
+            <div class="stage-overlay-pill" id="stageCountPill">真實 DOM 模糊節點：3 個</div>
           </div>
         </div>
 
         <div class="lab-grid">
           <div class="controls-pane">
             <div>
-              <div class="ctrl-label"><span>1. 同畫面 backdrop-filter 容器數</span><span class="mono" id="valLayers">3 層</span></div>
-              <input type="range" id="rangeLayers" min="1" max="12" value="3">
+              <div class="ctrl-label"><span>1. 真實掛載主玻璃卡片數</span><span class="mono" id="valLayers">3 張</span></div>
+              <input type="range" id="rangeLayers" min="1" max="20" value="3">
             </div>
 
             <div>
-              <div class="ctrl-label"><span>2. 模糊半徑（Blur Radius）</span></div>
+              <div class="ctrl-label"><span>2. 模糊半徑（真實套用於每個 DOM）</span></div>
               <div class="btn-row" id="blurChoiceBtns">
-                <button type="button" class="seg-btn" data-blur="10">10px（輕量）</button>
-                <button type="button" class="seg-btn active" data-blur="20">20px（標準）</button>
-                <button type="button" class="seg-btn" data-blur="40">40px（高負載）</button>
+                <button type="button" class="seg-btn" data-blur="10">10px</button>
+                <button type="button" class="seg-btn active" data-blur="20">20px</button>
+                <button type="button" class="seg-btn" data-blur="40">40px</button>
+                <button type="button" class="seg-btn" data-blur="60">60px（極限）</button>
               </div>
             </div>
 
             <label class="check-row">
               <input type="checkbox" id="chkNested">
-              <span><strong>卡片內層按鈕／標籤也嵌套 backdrop-filter</strong>（違反 AGENTS.md 效能預算，造成雙倍以上紋理重繪）</span>
+              <span><strong>卡片內層 3 個膠囊也嵌套 backdrop-filter</strong>（違反 AGENTS.md：真實模糊節點暴增為 4 倍！）</span>
             </label>
 
             <label class="check-row">
-              <input type="checkbox" id="chkParallax">
-              <span><strong>底層極光背景持續做大面積動畫與視差捲動</strong>（強迫每幀全數重算模糊）</span>
+              <input type="checkbox" id="chkMotion" checked>
+              <span><strong>底層彩色光球每幀移動（強迫 GPU 即時重繪模糊）</strong></span>
             </label>
+
+            <button type="button" class="seg-btn" id="btnResetStats" style="align-self:flex-start;">↺ 清除掉幀計數與波形圖</button>
           </div>
 
           <div class="fps-pane">
-            <div class="fps-header">
-              <span style="font-size:13.5px; font-weight:800;">📱 行動裝置模擬渲染幀率（目標 60 FPS）</span>
-              <span class="fps-num" id="fpsNum">60 FPS</span>
+            <div class="telemetry-grid">
+              <div class="tele-box">
+                <div class="tele-val" id="fpsNum">--</div>
+                <div class="tele-lbl">實測 FPS（即時）</div>
+              </div>
+              <div class="tele-box">
+                <div class="tele-val" id="frameMsNum">-- ms</div>
+                <div class="tele-lbl">平均幀耗時（預算 ≤16.7ms）</div>
+              </div>
+              <div class="tele-box">
+                <div class="tele-val" id="jankNum">0</div>
+                <div class="tele-lbl">掉幀次數（&gt; 24ms）</div>
+              </div>
             </div>
 
-            <div class="meter-track">
-              <div class="meter-fill" id="fpsBar" style="width:100%; background-color:#10b981;"></div>
+            <div class="canvas-wrap">
+              <div class="canvas-head">
+                <span>LIVE FRAME TIME WAVEFORM (ms)</span>
+                <span style="color:#34d399;">--- 16.7ms (60FPS 線)</span>
+              </div>
+              <canvas id="fpsTimelineCanvas" width="440" height="76"></canvas>
             </div>
 
-            <div class="verdict-pill" id="fpsVerdict"></div>
-
-            <div>
-              <div style="font-size:12.5px; font-weight:800; margin-bottom:6px;">GPU 合成圖層配額可視化：</div>
-              <div class="layer-stack" id="layerStack"></div>
-            </div>
+            <div class="verdict-pill" id="fpsVerdict">正在量測目前瀏覽器 GPU 渲染效能…</div>
 
             <div class="audit-list" id="auditList"></div>
+
+            <div class="hardware-note">
+              ℹ️ <strong>實測說明</strong>：上方數值皆透過 <code class="mono">performance.now()</code> 直接量測您目前的瀏覽器與顯示卡（最高上限依螢幕更新率如 60Hz/120Hz 而定）。高階桌機獨顯較不易掉幀，若想觀察明顯負載差異，可點擊「🚨 失控 Vibe Coding (80層/60px)」或在筆電／手機上開啟測試。
+            </div>
           </div>
         </div>
       </div>
@@ -515,109 +692,268 @@
       const valLayers = document.getElementById('valLayers');
       const blurBtns = document.querySelectorAll('#blurChoiceBtns .seg-btn');
       const chkNested = document.getElementById('chkNested');
-      const chkParallax = document.getElementById('chkParallax');
+      const chkMotion = document.getElementById('chkMotion');
       const btnVibePreset = document.getElementById('btnVibePreset');
       const btnSpecPreset = document.getElementById('btnSpecPreset');
+      const btnToggleRun = document.getElementById('btnToggleRun');
+      const btnResetStats = document.getElementById('btnResetStats');
+
+      const gpuRenderStage = document.getElementById('gpuRenderStage');
+      const gpuLayerHost = document.getElementById('gpuLayerHost');
+      const stageCountPill = document.getElementById('stageCountPill');
+      const orb1 = document.getElementById('orb1');
+      const orb2 = document.getElementById('orb2');
+      const orb3 = document.getElementById('orb3');
 
       const fpsNum = document.getElementById('fpsNum');
-      const fpsBar = document.getElementById('fpsBar');
+      const frameMsNum = document.getElementById('frameMsNum');
+      const jankNum = document.getElementById('jankNum');
       const fpsVerdict = document.getElementById('fpsVerdict');
-      const layerStack = document.getElementById('layerStack');
       const auditList = document.getElementById('auditList');
+      const canvas = document.getElementById('fpsTimelineCanvas');
+      const ctx = canvas.getContext('2d');
 
       let blurRadius = 20;
+      let isRunning = true;
+      let animPhase = 0;
+      let lastFrameTime = performance.now();
+      let lastUiUpdate = 0;
+      let jankCount = 0;
+      const frameDeltas = [];
 
-      function renderPerfLab() {
-        const layers = Number(rangeLayers.value);
+      function buildRealGpuLayers() {
+        const count = Number(rangeLayers.value);
         const nested = chkNested.checked;
-        const parallax = chkParallax.checked;
+        valLayers.textContent = count + ' 張';
 
-        valLayers.textContent = layers + ' 層';
+        const frag = document.createDocumentFragment();
+        const cols = Math.min(5, Math.max(3, Math.ceil(Math.sqrt(count))));
 
-        let penalty = Math.max(0, layers - 3) * 3.8;
-        if (blurRadius === 40) penalty += layers * 1.4;
-        if (blurRadius === 10) penalty = Math.max(0, penalty - 4);
-        if (nested) penalty += 14 + layers * 1.2;
-        if (parallax) penalty += 12 + layers * 0.8;
+        for (let i = 0; i < count; i++) {
+          const card = document.createElement('div');
+          card.className = 'real-glass-layer';
+          card.setAttribute('data-has-backdrop', 'true');
 
-        const fps = Math.max(14, Math.min(60, Math.round(60 - penalty)));
-        fpsNum.textContent = fps + ' FPS';
-        fpsBar.style.width = Math.round((fps / 60) * 100) + '%';
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+          const leftPct = 4 + col * 16 + (row % 2) * 4;
+          const topPct = 6 + row * 17;
 
-        if (fps >= 52) {
-          fpsBar.style.backgroundColor = '#10b981';
-          fpsNum.style.color = '#047857';
-          fpsVerdict.style.background = 'rgba(16, 185, 129, 0.2)';
-          fpsVerdict.textContent = '✅ 流暢達標：符合 AGENTS.md GPU 合成效能預算！';
-        } else if (fps >= 36) {
-          fpsBar.style.backgroundColor = '#f59e0b';
-          fpsNum.style.color = '#b45309';
-          fpsVerdict.style.background = 'rgba(245, 158, 11, 0.25)';
-          fpsVerdict.textContent = '⚠️ 輕度掉幀：中階手機在快速捲動時將開始感覺卡頓。';
-        } else {
-          fpsBar.style.backgroundColor = '#f43f5e';
-          fpsNum.style.color = '#be123c';
-          fpsVerdict.style.background = 'rgba(244, 63, 94, 0.25)';
-          fpsVerdict.textContent = '🚨 嚴重效能瓶頸：過度重繪導致幀率跌破流暢臨界點！';
+          card.style.left = Math.min(leftPct, 64) + '%';
+          card.style.top = Math.min(topPct, 64) + '%';
+          card.style.width = '34%';
+          card.style.minWidth = '148px';
+
+          const filterCss = 'blur(' + blurRadius + 'px) saturate(190%)';
+          card.style.backdropFilter = filterCss;
+          card.style.webkitBackdropFilter = filterCss;
+
+          const title = document.createElement('div');
+          title.className = 'real-layer-title';
+          title.textContent = 'GPU Layer #' + (i + 1) + ' (' + blurRadius + 'px)';
+          card.appendChild(title);
+
+          const subRow = document.createElement('div');
+          subRow.className = 'real-sub-row';
+          const pillLabels = ['blur', 'sat', 'glass'];
+          for (let j = 0; j < 3; j++) {
+            const pill = document.createElement('span');
+            pill.className = 'real-sub-pill' + (nested ? ' is-nested-blur' : '');
+            pill.textContent = pillLabels[j];
+            if (nested) {
+              pill.setAttribute('data-has-backdrop', 'true');
+              const subFilter = 'blur(' + blurRadius + 'px) saturate(180%)';
+              pill.style.backdropFilter = subFilter;
+              pill.style.webkitBackdropFilter = subFilter;
+            }
+            subRow.appendChild(pill);
+          }
+          card.appendChild(subRow);
+          frag.appendChild(card);
         }
 
-        const effectiveLayers = nested ? layers * 2 : layers;
-        const chips = [];
-        for (let i = 1; i <= effectiveLayers; i++) {
-          const isHeavy = i > 5 || nested || parallax;
-          chips.push('<span class="gpu-chip ' + (isHeavy ? 'heavy' : '') + '">GPU Layer #' + i + ' (' + blurRadius + 'px)</span>');
-        }
-        layerStack.innerHTML = chips.join('');
+        gpuLayerHost.innerHTML = '';
+        gpuLayerHost.appendChild(frag);
 
+        const activeNodes = gpuRenderStage.querySelectorAll('[data-has-backdrop="true"]').length;
+        stageCountPill.textContent = '真實 DOM 模糊節點：' + activeNodes + ' 個';
+        renderAuditNotes(count, nested, activeNodes);
+      }
+
+      function renderAuditNotes(layers, nested, activeNodes) {
+        const motion = chkMotion.checked;
         const notes = [];
         notes.push(layers <= 4
-          ? '✅ 畫面可視區模糊圖層數量適中（' + layers + ' 層）。'
-          : '❌ 單畫面模糊圖層過多（' + layers + ' 層），建議合併為大型容器再於內部改用半透明實底。');
+          ? '✅ 主毛玻璃容器數量適中（' + layers + ' 張），符合單畫面節制原則。'
+          : '❌ 主毛玻璃容器過多（' + layers + ' 張交疊），容易拉高 GPU 紋理緩衝填滿率。');
         notes.push(!nested
-          ? '✅ 遵守 AGENTS.md 禁令：次級子元件未重複嵌套 backdrop-filter。'
-          : '❌ 違反 AGENTS.md 效能守則：嵌套模糊會使紋理緩衝讀寫翻倍！');
-        notes.push(!parallax
-          ? '✅ 底層背景保持靜態穩定，避免無意義的每幀強制重繪。'
-          : '❌ 大面積視差動畫搭配模糊，大幅耗損行動裝置電池與 GPU。');
+          ? '✅ 遵守 AGENTS.md 禁令：卡片內部膠囊採純色半透明（實際掛載 ' + activeNodes + ' 個模糊節點）。'
+          : '❌ 違反 AGENTS.md 嵌套禁令：內層元件重複啟用模糊，真實 GPU 模糊節點暴增至 ' + activeNodes + ' 個！');
+        notes.push(!motion
+          ? '✅ 底層背景保持靜態，瀏覽器可直接快取模糊紋理。'
+          : '⚠️ 底層彩色光球每幀位移中：迫使 ' + activeNodes + ' 個模糊節點每幀即時重新採樣。');
         auditList.innerHTML = notes.map((n) => '<div class="audit-item">' + n + '</div>').join('');
       }
 
-      rangeLayers.addEventListener('input', renderPerfLab);
-      chkNested.addEventListener('change', renderPerfLab);
-      chkParallax.addEventListener('change', renderPerfLab);
+      function drawWaveform() {
+        const w = canvas.width;
+        const h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // 16.7ms (60 FPS) threshold line (scale 0..50ms)
+        const maxMs = 50;
+        const budgetY = h - (16.7 / maxMs) * h;
+        ctx.strokeStyle = 'rgba(52, 211, 153, 0.75)';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(0, budgetY);
+        ctx.lineTo(w, budgetY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (frameDeltas.length === 0) return;
+
+        const barW = w / 60;
+        const startIdx = Math.max(0, frameDeltas.length - 60);
+        for (let i = startIdx; i < frameDeltas.length; i++) {
+          const dt = frameDeltas[i];
+          const barH = Math.min(h - 2, Math.max(3, (dt / maxMs) * h));
+          const x = (i - startIdx) * barW;
+          if (dt <= 18.5) {
+            ctx.fillStyle = '#34d399';
+          } else if (dt <= 26) {
+            ctx.fillStyle = '#fbbf24';
+          } else {
+            ctx.fillStyle = '#fb7185';
+          }
+          ctx.fillRect(x + 1, h - barH, Math.max(2, barW - 2), barH);
+        }
+      }
+
+      function resetTelemetry() {
+        frameDeltas.length = 0;
+        jankCount = 0;
+        jankNum.textContent = '0';
+        lastFrameTime = performance.now();
+        drawWaveform();
+      }
+
+      function tick(now) {
+        const dt = now - lastFrameTime;
+        lastFrameTime = now;
+
+        if (isRunning && document.visibilityState === 'visible') {
+          if (chkMotion.checked) {
+            animPhase += 0.045;
+            const x1 = Math.sin(animPhase) * 65;
+            const y1 = Math.cos(animPhase * 0.8) * 38;
+            const x2 = Math.cos(animPhase * 1.1) * 75;
+            const y2 = Math.sin(animPhase * 0.7) * 42;
+            const x3 = Math.sin(animPhase * 0.9 + 2) * 70;
+            const y3 = Math.cos(animPhase * 1.2) * 34;
+
+            orb1.style.transform = 'translate3d(' + x1.toFixed(1) + 'px,' + y1.toFixed(1) + 'px,0)';
+            orb2.style.transform = 'translate3d(' + x2.toFixed(1) + 'px,' + y2.toFixed(1) + 'px,0)';
+            orb3.style.transform = 'translate3d(' + x3.toFixed(1) + 'px,' + y3.toFixed(1) + 'px,0)';
+          }
+
+          if (dt > 0 && dt < 500) {
+            frameDeltas.push(dt);
+            if (frameDeltas.length > 90) frameDeltas.shift();
+            if (dt > 24) jankCount++;
+          }
+
+          if (now - lastUiUpdate > 200 && frameDeltas.length >= 4) {
+            lastUiUpdate = now;
+            const recent = frameDeltas.slice(-30);
+            const avgMs = recent.reduce((a, b) => a + b, 0) / recent.length;
+            const liveFps = Math.round(1000 / Math.max(1, avgMs));
+
+            fpsNum.textContent = liveFps + ' FPS';
+            frameMsNum.textContent = avgMs.toFixed(1) + ' ms';
+            jankNum.textContent = String(jankCount);
+
+            if (liveFps >= 52 && avgMs <= 19.5) {
+              fpsNum.style.color = '#047857';
+              fpsVerdict.style.background = 'rgba(16, 185, 129, 0.22)';
+              fpsVerdict.textContent = '✅ 目前裝置實測流暢（' + liveFps + ' FPS / ' + avgMs.toFixed(1) + ' ms）';
+            } else if (liveFps >= 36) {
+              fpsNum.style.color = '#b45309';
+              fpsVerdict.style.background = 'rgba(245, 158, 11, 0.25)';
+              fpsVerdict.textContent = '⚠️ 開始出現輕度掉幀（' + liveFps + ' FPS / ' + avgMs.toFixed(1) + ' ms）';
+            } else {
+              fpsNum.style.color = '#be123c';
+              fpsVerdict.style.background = 'rgba(244, 63, 94, 0.25)';
+              fpsVerdict.textContent = '🚨 實測嚴重卡頓（' + liveFps + ' FPS / ' + avgMs.toFixed(1) + ' ms）';
+            }
+            drawWaveform();
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      rangeLayers.addEventListener('input', () => {
+        buildRealGpuLayers();
+        resetTelemetry();
+      });
+
+      chkNested.addEventListener('change', () => {
+        buildRealGpuLayers();
+        resetTelemetry();
+      });
+
+      chkMotion.addEventListener('change', () => {
+        const count = Number(rangeLayers.value);
+        const activeNodes = gpuRenderStage.querySelectorAll('[data-has-backdrop="true"]').length;
+        renderAuditNotes(count, chkNested.checked, activeNodes);
+        resetTelemetry();
+      });
 
       blurBtns.forEach((btn) => {
         btn.addEventListener('click', () => {
           blurBtns.forEach((b) => b.classList.remove('active'));
           btn.classList.add('active');
           blurRadius = Number(btn.getAttribute('data-blur'));
-          renderPerfLab();
+          buildRealGpuLayers();
+          resetTelemetry();
         });
       });
 
       btnVibePreset.addEventListener('click', () => {
-        rangeLayers.value = 10;
-        blurRadius = 40;
+        rangeLayers.value = 20;
+        blurRadius = 60;
         chkNested.checked = true;
-        chkParallax.checked = true;
-        blurBtns.forEach((b) => b.classList.toggle('active', b.getAttribute('data-blur') === '40'));
-        btnVibePreset.classList.add('active');
+        chkMotion.checked = true;
+        blurBtns.forEach((b) => b.classList.toggle('active', b.getAttribute('data-blur') === '60'));
+        btnVibePreset.classList.add('danger-active');
         btnSpecPreset.classList.remove('active');
-        renderPerfLab();
+        buildRealGpuLayers();
+        resetTelemetry();
       });
 
       btnSpecPreset.addEventListener('click', () => {
         rangeLayers.value = 3;
         blurRadius = 20;
         chkNested.checked = false;
-        chkParallax.checked = false;
+        chkMotion.checked = true;
         blurBtns.forEach((b) => b.classList.toggle('active', b.getAttribute('data-blur') === '20'));
         btnSpecPreset.classList.add('active');
-        btnVibePreset.classList.remove('active');
-        renderPerfLab();
+        btnVibePreset.classList.remove('danger-active');
+        buildRealGpuLayers();
+        resetTelemetry();
       });
 
-      renderPerfLab();
+      btnToggleRun.addEventListener('click', () => {
+        isRunning = !isRunning;
+        lastFrameTime = performance.now();
+        btnToggleRun.textContent = isRunning ? '⏸ 暫停壓測' : '▶ 繼續壓測';
+      });
+
+      btnResetStats.addEventListener('click', resetTelemetry);
+
+      buildRealGpuLayers();
+      requestAnimationFrame(tick);
 
       // Quiz
       const quizCards = document.querySelectorAll('.quiz-card');

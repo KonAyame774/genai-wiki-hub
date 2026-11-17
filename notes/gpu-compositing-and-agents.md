@@ -54,17 +54,18 @@
 
 ## 三、互動實驗室規格（Interactive Lab Spec）
 
-- **實驗室名稱**：GPU 合成圖層效能與 AGENTS.md 合規模擬器
-- **教學目的**：讓開發者透過調整同畫面重疊的 `backdrop-filter` 層數、模糊半徑、視差動畫與是否遵守 `AGENTS.md` 嵌套規則，量化預測行動裝置的預估幀率（FPS）與 GPU 緩衝負擔。
+- **實驗室名稱**：GPU 合成圖層真實渲染與 `AGENTS.md` 效能壓測實驗室
+- **教學目的**：不再使用估算數字，而是直接在瀏覽器 DOM 中動態掛載真實的 `backdrop-filter` 容器與嵌套子層，並以 `requestAnimationFrame` 連續位移底層光球強迫 GPU 每幀重繪，透過 `performance.now()` 即時量測目前裝置的真實 FPS、單幀耗時（ms）與掉幀（Jank）波形。
 - **控制元件（Inputs）**：
-  - 同可視區 `backdrop-filter` 容器數量滑桿：`1 ～ 12 個`
-  - 是否允許卡片內層子元件嵌套 `backdrop-filter` 開關
-  - 底層極光背景是否持續執行大面積 CSS 動畫 / 視差捲動開關
-  - 模糊半徑大小：`10px` / `20px` / `40px`
-  - 快速一鍵對比按鈕：`失控 Vibe Coding（全疊加爆表）` vs. `遵守 AGENTS.md 預算（最佳化配置）`
+  - 真實渲染主層數滑桿：`1 ～ 20 層`（於 `#gpuRenderStage` 中真實生成互相交疊的 `.real-glass-layer` DOM）
+  - 模糊半徑切換：`10px` / `20px` / `40px` / `60px`
+  - 卡片內層子元件嵌套 `backdrop-filter` 開關（違反 `AGENTS.md` 規範：每張卡片內部 3 個子膠囊同步掛上即時模糊，總模糊節點倍增為 4 倍）
+  - 底層高對比光球連續移動開關（`requestAnimationFrame` 每幀更新 `translate3d()` 迫使瀏覽器即時重算背景模糊）
+  - 快速壓測預設：`🚨 失控 Vibe Coding（20 主層＋嵌套＝80 個真實模糊層＋60px）` vs. `🏆 遵守 AGENTS.md 預算（3 主層＋0 嵌套＋20px）`
 - **視覺化輸出（Outputs）**：
-  - 行動裝置模擬幀率儀表（`60 FPS 流暢` / `38 FPS 掉幀` / `16 FPS 嚴重卡頓`）＋ GPU 合成層視覺化堆疊示意。
-  - 同步顯示違反或通過了哪幾條 `AGENTS.md` 規則與具體優化建議。
+  - 真實 GPU 渲染測試舞台（可視化重疊毛玻璃卡片與移動光球）。
+  - 即時真實遙測儀表：Live Measured FPS、單幀耗時（`ms`）、Jank 掉幀次數（`> 24ms`）、DOM 實際掛載 `[data-has-backdrop="true"]` 節點數，以及 Canvas 繪製的最近 60 幀耗時波形圖（含 `16.7ms` 60FPS 預算基準線）。
+  - `AGENTS.md` 合規檢查清單與優化建議。
 
 ---
 

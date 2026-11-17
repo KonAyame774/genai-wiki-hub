@@ -4,6 +4,17 @@
 
 ---
 
+## [2026-11-17] v2.1 — 升級 Unit 03 互動實驗室為真實 GPU 渲染與即時 FPS 壓測
+
+- **變更內容**：
+  - 將 `lessons/gpu-compositing-and-agents/index.html` 的第四段實驗室從公式估算升級為真實瀏覽器渲染壓測：依滑桿與嵌套開關在舞台動態掛載 `1 ～ 80` 個真實 `backdrop-filter` DOM 節點，搭配 `requestAnimationFrame` 移動底層光球強迫 GPU 每幀重繪。
+  - 新增 `performance.now()` 即時 FPS、Frame Time（`ms`）、Jank 計數與 Canvas 60 幀波形圖（含 `16.7ms` 基準線）。
+  - 同步更新 `notes/gpu-compositing-and-agents.md` 規格。
+- **影響檔案**：
+  - `notes/gpu-compositing-and-agents.md`、`lessons/gpu-compositing-and-agents/index.html`、`log.md`
+
+---
+
 ## [2026-11-17] v2.0 — 全面轉型為「Aero Glass 與介面光學設計知識庫」
 
 - **變更決策**：

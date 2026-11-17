@@ -20,7 +20,7 @@
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | Unit 01 | `blur-and-saturation` | 背景模糊、鮮豔度補償與玻璃微觀雜訊 | 光學基底 | ✅ 已定稿 | ✅ 毛玻璃光學調校實驗台（`blur`、`saturate`、SVG 雜訊即時調參）+ 3 題測驗 |
 | Unit 02 | `bevel-and-refraction` | 物理厚度、倒角光線與 Vista 鏡面切面 | 表面折射 | ✅ 已定稿 | ✅ Vista Aero 光學元件組裝器（倒角、`inset` 陰影、50% 切面、文字光暈）+ 3 題測驗 |
-| Unit 03 | `gpu-compositing-and-agents` | GPU 合成圖層效能瓶頸與 AGENTS.md 規範 | 效能與規範 | ✅ 已定稿 | ✅ GPU 圖層效能與 FPS 壓力模擬器 + AGENTS.md 合規診斷 + 3 題測驗 |
+| Unit 03 | `gpu-compositing-and-agents` | GPU 合成圖層效能瓶頸與 AGENTS.md 規範 | 效能與規範 | ✅ 已定稿 | ✅ 真實 GPU 渲染與即時 FPS 壓測實驗室 + AGENTS.md 合規診斷 + 3 題測驗 |
 
 ---
 
